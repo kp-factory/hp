@@ -1,0 +1,52 @@
+
+A:hover{
+  color:gold;
+  text-decoration:none;
+  font-weight:bold;
+  font-size : 9pt;
+
+}
+A:LINK{
+  color : white;
+  text-decoration : none;
+  font-weight : bold;
+  font-size : 9pt;
+
+}
+P{
+  color : white;
+  background-color : black;
+  font-size : 9pt;
+
+}
+BODY{
+  background-color : black;
+  color : white;
+  font-size : 9pt;
+
+}
+TABLE{
+  color : white;
+  background-color : black;
+  font-size : 9pt;
+
+}
+TR{
+  color : #cccccc;
+  background-color : black;
+}
+TD{
+  color : #cccccc;
+  background-color : black;
+}
+TH{
+  color : #cccccc;
+  background-color : black;
+}
+A{
+  color : white;
+  font-weight : bold;
+  text-decoration : none;
+  font-size : 9pt;
+
+}
