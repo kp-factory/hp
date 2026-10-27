@@ -67,12 +67,3 @@ IMG {
   max-width: 100%;
   height: auto;
 }
-
-/* 当時の固定幅テーブル（width="700"など）をスマホの画面幅に収める設定 */
-TABLE {
-  max-width: 100%;
-  width: 100% !important; /* 固定幅を無効化して画面幅に合わせる場合 */
-  box-sizing: border-box;
-}
-
-
