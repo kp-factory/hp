@@ -144,6 +144,35 @@
       padding-bottom: 20px;
     }
 
+/* --- スマホ対応の流れる文字スタイル --- */
+  .marquee-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 15px auto;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 12s linear infinite;
+    font-size: 15px;
+    color: #ffffff;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(-100%, 0);
+    }
+  }
+
+
+
     /* --- 画像スライダー用 CSS --- */
     .carousel-container {
       position: relative;
@@ -325,9 +354,16 @@
     </span>
     </p>
 -->
-
-
+  
+<!-- 流れる文字（マーキー風）エリア -->
+  <div class="marquee-container">
+    <div class="marquee-text">
+      <span id="kan16"></span> Website リニューアル工事中
+    </div>
+  </div>
+<!--
  <TD align="center" height="43"><center><MARQUEE  height=20 width=300><span id="kan16"></span> Website リニューアル工事中</MARQUEE></center></TD>
+ -->
 
     <!-- 
     <p>Website リニューアル工事中</p>
