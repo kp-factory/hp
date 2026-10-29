@@ -222,7 +222,33 @@
       border-radius: 8px;
       object-fit: cover;
     }
+    
+    
+.slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.3); /* 背景の黒をより薄く（0.6 → 0.3） */
+      color: rgba(255, 255, 255, 0.6); /* 矢印の文字色自体も少し薄めの白に */
+      border: 1px solid rgba(255, 255, 255, 0.15); /* 枠線を薄く（0.3 → 0.15） */
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      z-index: 10;
+      user-select: none;
+      transition: background-color 0.2s, color 0.2s; /* ホバー時にスムーズに変わるように追加 */
+    }
 
+    .slider-btn:hover {
+      background-color: rgba(0, 0, 0, 0.7); /* ホバー時は少し濃くして視認性を確保 */
+      color: rgba(255, 255, 255, 1);
+    }
+/* ---
     .slider-btn {
       position: absolute;
       top: 50%;
@@ -245,6 +271,7 @@
     .slider-btn:hover {
       background-color: rgba(0, 0, 0, 0.9);
     }
+--- */
 
     .prev-btn {
       left: 10px;
