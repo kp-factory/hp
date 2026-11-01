@@ -41,7 +41,7 @@
     /* 左右のボックスの幅を右側のロゴ画像の大きさに合わせて揃えることで中央を正確に出す */
     .nav-left-space,
     .nav-right-item {
-      width: 80px; 
+      width: 90px; 
       display: flex;
       align-items: center;
     }
@@ -57,6 +57,16 @@
       text-align: center;
       flex-grow: 1;
       margin: 0;
+    }
+
+    /* スマホなどで画面が狭いときに文字が右側画像に隠れないよう、余白を調整して中央寄せをキープする */
+    @media screen and (max-width: 480px) {
+      .nav-left-space {
+        width: 10px; /* 左側の無駄なスペースを縮めて、文字を右側画像の重なりから逃がす */
+      }
+      .navbar-title {
+        font-size: 16px;
+      }
     }
 
     .nav-menu a {
@@ -146,12 +156,9 @@
       color: #aaaaaa;
     }
 
-    /* --- フッターエリア（画面幅いっぱいに広げて左右端へ配置） --- */
+    /* --- フッターエリア（INDEXと同一のレイアウトに統一・スマホで改行させない） --- */
     .footer-container {
-      width: 100vw; /* 画面幅いっぱい */
-      /* ---
-      margin-left: calc(50% - 50vw);
-      --- */
+      width: 100%;
       box-sizing: border-box;
       margin-top: 40px;
     }
@@ -165,14 +172,15 @@
 
     .footer-image-wrapper {
       display: flex;
-      justify-content: space-between; /* 左右に配置 */
+      justify-content: space-between;
       align-items: center;
       width: 100%;
-      max-width: none;
-      margin: 0;
-      padding: 0 30px;
+      max-width: 740px; /* コンテンツ幅に合わせる */
+      margin: 0 auto;
+      padding: 0 20px;
       padding-bottom: 20px;
       box-sizing: border-box;
+      white-space: nowrap; /* スマホで文字が強制改行されないようにする */
     }
 
     .footer-since {
