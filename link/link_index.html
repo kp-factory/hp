@@ -156,7 +156,7 @@
       color: #aaaaaa;
     }
 
-    /* --- フッターエリア（INDEXと同一のレイアウトに統一・スマホで改行させない） --- */
+    /* --- フッターエリア（中央2列配置＆トップページリンク用） --- */
     .footer-container {
       width: 100%;
       box-sizing: border-box;
@@ -170,33 +170,25 @@
       margin: 0 0 20px 0;
     }
 
-    .footer-image-wrapper {
+    .footer-content-wrapper {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      width: 100%;
-      max-width: 740px; /* コンテンツ幅に合わせる */
-      margin: 0 auto;
-      padding: 0 20px;
-      padding-bottom: 20px;
-      box-sizing: border-box;
-      white-space: nowrap; /* スマホで文字が強制改行されないようにする */
+      text-align: center;
+      padding-bottom: 30px;
+      gap: 8px; /* 1段目と2段目の間隔 */
     }
 
-    .footer-since {
+    .footer-link {
+      color: #666666; /* 文字の色を少し薄めに調整 */
+      text-decoration: none;
       font-size: 14px;
-      color: #888888;
-      margin: 0;
       font-weight: bold;
-      text-align: left;
     }
 
-    .footer-copyright {
-      font-size: 14px;
-      color: #888888;
-      margin: 0;
-      font-weight: bold;
-      text-align: right;
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -205,21 +197,21 @@
   <!-- ナビゲーションメニュー -->
   <nav class="navbar">
     <ul class="nav-menu">
-      <li class="nav-left-space"></li>
-      <li class="navbar-title">LINK</li>
-      <li class="nav-right-item">
+      <li class="nav-left-item">
         <a href="../index.html">
           <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
         </a>
       </li>
+      <li class="navbar-title">LINK</li>
+      <li class="nav-right-space"></li>
     </ul>
   </nav>
 
   <!-- コンテンツエリア -->
   <div class="content-container top-content">
     
-    <!-- Sponsor -->
-    <div class="link-section-title">Sponsor（50音順）</div>
+    <!-- Sponsors -->
+    <div class="link-section-title">Sponsors（50音順）</div>
     <table class="link-table">
       <tbody>
         <tr>
@@ -370,14 +362,13 @@
       当サイトはリンクフリーです、相互リンクはメールにてご連絡ください。
     </div>
 
-  </div>
 
   <!-- フッターエリア -->
   <footer class="footer-container">
     <hr class="footer-divider">
-    <div class="footer-image-wrapper">
-      <span class="footer-since">Since 1985</span>
-      <span class="footer-copyright">Copyright© 2001 KP-ファクトリー</span>
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
     </div>
   </footer>
 
