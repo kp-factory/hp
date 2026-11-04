@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ギヤ比・速度計算シミュレーター</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --text-color: #ffffff;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        /* --- ナビゲーションバー (link_index共通) --- */
+        .navbar {
+            background-color: #000000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #333333;
+            box-sizing: border-box;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            height: 60px;
+        }
+
+        .nav-left-space,
+        .nav-right-item {
+            width: 90px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right-item {
+            justify-content: flex-end;
+        }
+
+        .navbar-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0;
+        }
+
+        @media screen and (max-width: 480px) {
+            .nav-left-space {
+                width: 10px;
+            }
+            .navbar-title {
+                font-size: 16px;
+            }
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .nav-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        /* --- メインコンテンツコンテナ --- */
+        .container {
+            width: 98%;
+            max-width: 740px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .top-content {
+            padding-top: 95px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            display: none; /* ナビバーのタイトルと重複するため非表示 */
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #666666;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 25px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #333333;
+            color: #cccccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sample-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sample-controls select {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .sub-btn {
+            background-color: #222222;
+            color: white;
+            border: 1px solid #444444;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: auto;
+        }
+
+        .sub-btn:hover {
+            background-color: #333333;
+        }
+
+        .danger-btn {
+            background-color: #4a1515;
+            border-color: #7f1d1d;
+        }
+        .danger-btn:hover {
+            background-color: #7f1d1d;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        button.main-btn {
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+        }
+
+        button.main-btn:hover {
+            background-color: #2563eb;
+        }
+
+        button.reset-btn {
+            background-color: #333333;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.reset-btn:hover {
+            background-color: #444444;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            background-color: #111111;
+        }
+
+        th, td {
+            border: 1px solid #333333;
+            padding: 10px 8px;
+            color: #ffffff;
+        }
+
+        th {
+            background-color: #1a1a1a;
+            font-weight: bold;
+            color: #cccccc;
+        }
+
+        tr:nth-child(even) {
+            background-color: #161616;
+        }
+
+        .tire-info {
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* グラフエリア */
+        .chart-box {
+            background: #111111;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .chart-actions {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #aaaaaa;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-weight: bold;
+        }
+
+        .chart-container-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 320px !important;
+            background: #0a0a0a;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #chartTooltip {
+            position: absolute;
+            display: none;
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            text-align: left;
+            line-height: 1.4;
+            border: 1px solid #333333;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #aaaaaa;
+            font-weight: bold;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-line {
+            width: 24px;
+            height: 3px;
+        }
+
+        .legend-line.solid {
+            background-color: #3b82f6;
+        }
+
+        .legend-line.dashed {
+            background-image: linear-gradient(to right, #aaaaaa 50%, transparent 50%);
+            background-size: 6px 3px;
+            background-repeat: repeat-x;
+        }
+
+        /* --- フッターエリア (link_index共通) --- */
+        .footer-container {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid #333333;
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 30px;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: #666666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .btn-container {
+                flex-direction: column;
+            }
+            button.main-btn, button.reset-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="../index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li class="navbar-title">ギヤ比・速度計算シミュレーター</li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+<div class="container top-content">
+    <h1>ギヤ比・速度計算シミュレーター</h1>
+
+    <div class="card">
+        <form id="calcForm" onsubmit="event.preventDefault(); calculate();">
+            
+            <div class="section-title">タイヤ・ホイール仕様 & 回転数設定</div>
+            <div class="grid-container">
+                <div class="input-group">
+                    <label for="wheelInch">ホイール直径 (インチ)</label>
+                    <input type="number" id="wheelInch" step="0.1" value="13" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="tireWidth">タイヤ幅 (mm)</label>
+                    <input type="number" id="tireWidth" step="1" value="175" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="tireFlat">扁平率 (%)</label>
+                    <input type="number" id="tireFlat" step="1" value="60" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="maxRpmInput">最高回転数 (rpm)</label>
+                    <input type="number" id="maxRpmInput" step="500" min="1000" max="15000" value="9000" required oninput="saveInputs()">
+                </div>
+            </div>
+            <div id="tireOuterDia" class="tire-info">計算外径: -</div>
+
+            <div class="section-title">
+                <span>ファイナルギヤ & 最終減速</span>
+            </div>
+            <div class="sample-controls">
+                <select id="finalSampleSelect" onchange="loadFinalSample()">
+                    <option value="">-- ファイナルサンプルを選択 --</option>
+                </select>
+                <button type="button" class="sub-btn" onclick="saveFinalSample()">現在の値を登録/上書き</button>
+                <button type="button" class="sub-btn danger-btn" onclick="deleteFinalSample()">削除</button>
+            </div>
+            <div class="grid-container">
+                <div class="input-group">
+                    <label for="finalGear">ファイナルギヤレシオ</label>
+                    <input type="number" id="finalGear" step="0.001" value="3.583" required oninput="saveInputs()">
+                </div>
+            </div>
+
+            <div class="section-title">
+                <span>ミッションギヤレシオ (1速〜6速)</span>
+            </div>
+            <div class="sample-controls">
+                <select id="missionSampleSelect" onchange="loadMissionSample()">
+                    <option value="">-- ミッションサンプルを選択 --</option>
+                </select>
+                <button type="button" class="sub-btn" onclick="saveMissionSample()">現在の値を登録/上書き</button>
+                <button type="button" class="sub-btn danger-btn" onclick="deleteMissionSample()">削除</button>
+            </div>
+            <div class="grid-container">
+                <div class="input-group">
+                    <label for="gear1">1速</label>
+                    <input type="number" id="gear1" step="0.001" value="3.789" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="gear2">2速</label>
+                    <input type="number" id="gear2" step="0.001" value="2.220" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="gear3">3速</label>
+                    <input type="number" id="gear3" step="0.001" value="1.435" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="gear4">4速</label>
+                    <input type="number" id="gear4" step="0.001" value="1.000" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="gear5">5速</label>
+                    <input type="number" id="gear5" step="0.001" value="0.865" required oninput="saveInputs()">
+                </div>
+                <div class="input-group">
+                    <label for="gear6">6速</label>
+                    <input type="number" id="gear6" step="0.001" value="" required oninput="saveInputs()">
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="reset-btn" onclick="resetToDefault()">初期化する</button>
+                <button type="button" class="main-btn" onclick="calculate()">計算する</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="section-title">速度一覧 (km/h)</div>
+        <div class="table-responsive">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>回転数 (rpm)</th>
+                        <th>1速</th>
+                        <th>2速</th>
+                        <th>3速</th>
+                        <th>4速</th>
+                        <th>5速</th>
+                        <th>6速</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JavaScriptで動的生成 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 統合グラフ比較エリア -->
+    <div class="card">
+        <div class="section-title">速度特性グラフ比較 (※グラフ上の1000rpmポイントをクリック可能)</div>
+        <div class="chart-box">
+            <div class="chart-actions">
+                <span id="beforeInfo">基準値: 外径 -, ファイナル -</span>
+                <button type="button" class="sub-btn" onclick="setAsBefore()">現在の値を基準値（変更前）にコピー</button>
+            </div>
+            <div class="chart-container-wrapper">
+                <canvas id="comparisonChart" onclick="onChartClick(event)"></canvas>
+                <div id="chartTooltip"></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-line solid"></div><span>変更後（実線）</span></div>
+                <div class="legend-item"><div class="legend-line dashed"></div><span>変更前 / 基準値（破線）</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+<script>
+// --- 前回値の記憶・復元 ---
+const INPUT_KEYS = ['wheelInch', 'tireWidth', 'tireFlat', 'maxRpmInput', 'finalGear', 'gear1', 'gear2', 'gear3', 'gear4', 'gear5', 'gear6'];
+
+function saveInputs() {
+    INPUT_KEYS.forEach(key => {
+        const val = document.getElementById(key).value;
+        localStorage.setItem('gear_sim_' + key, val);
+    });
+    calculate();
+}
+
+function loadInputs() {
+    INPUT_KEYS.forEach(key => {
+        const saved = localStorage.getItem('gear_sim_' + key);
+        if (saved !== null) {
+            document.getElementById(key).value = saved;
+        }
+    });
+}
+
+function resetToDefault() {
+    if (!confirm('入力値および登録サンプルを初期状態に戻しますか？')) return;
+    
+    INPUT_KEYS.forEach(key => {
+        localStorage.removeItem('gear_sim_' + key);
+    });
+    localStorage.removeItem('gear_sim_before_state');
+    localStorage.removeItem('gear_sim_final_samples');
+    localStorage.removeItem('gear_sim_mission_samples');
+
+    document.getElementById('calcForm').reset();
+    
+    initDefaultSamples();
+    updateSampleDropdowns();
+    initBeforeState(true);
+    calculate();
+    
+    alert('初期状態にリセットしました。');
+}
+
+// --- 変更前（比較用基準データ）の管理 ---
+function getBeforeState() {
+    const saved = localStorage.getItem('gear_sim_before_state');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    return {
+        wheelInch: 13, tireWidth: 175, tireFlat: 60, finalGear: 3.583,
+        gears: [3.789, 2.220, 1.435, 1.000, 0.865, NaN]
+    };
+}
+
+function saveBeforeState(state) {
+    localStorage.setItem('gear_sim_before_state', JSON.stringify(state));
+}
+
+function initBeforeState(forceReset = false) {
+    if (forceReset || !localStorage.getItem('gear_sim_before_state')) {
+        const defaultState = {
+            wheelInch: parseFloat(document.getElementById('wheelInch').value) || 13,
+            tireWidth: parseFloat(document.getElementById('tireWidth').value) || 175,
+            tireFlat: parseFloat(document.getElementById('tireFlat').value) || 60,
+            finalGear: parseFloat(document.getElementById('finalGear').value) || 3.583,
+            gears: [
+                parseFloat(document.getElementById('gear1').value) || 3.789,
+                parseFloat(document.getElementById('gear2').value) || 2.220,
+                parseFloat(document.getElementById('gear3').value) || 1.435,
+                parseFloat(document.getElementById('gear4').value) || 1.000,
+                parseFloat(document.getElementById('gear5').value) || 0.865,
+                parseFloat(document.getElementById('gear6').value) || NaN
+            ]
+        };
+        saveBeforeState(defaultState);
+    }
+}
+
+function setAsBefore() {
+    const currentState = {
+        wheelInch: parseFloat(document.getElementById('wheelInch').value) || 0,
+        tireWidth: parseFloat(document.getElementById('tireWidth').value) || 0,
+        tireFlat: parseFloat(document.getElementById('tireFlat').value) || 0,
+        finalGear: parseFloat(document.getElementById('finalGear').value) || 0,
+        gears: [
+            parseFloat(document.getElementById('gear1').value),
+            parseFloat(document.getElementById('gear2').value),
+            parseFloat(document.getElementById('gear3').value),
+            parseFloat(document.getElementById('gear4').value),
+            parseFloat(document.getElementById('gear5').value),
+            parseFloat(document.getElementById('gear6').value)
+        ]
+    };
+    saveBeforeState(currentState);
+    calculate();
+    alert('現在の入力を「基準値（変更前）」としてコピーしました。');
+}
+
+// --- サンプル管理機能 ---
+const MAX_SAMPLES = 10;
+
+function getStoredSamples(storageKey) {
+    const data = localStorage.getItem(storageKey);
+    return data ? JSON.parse(data) : [];
+}
+
+function saveStoredSamples(storageKey, samples) {
+    localStorage.setItem(storageKey, JSON.stringify(samples));
+}
+
+function initDefaultSamples() {
+    if (!localStorage.getItem('gear_sim_final_samples')) {
+        const defaults = [
+            { name: 'ノーマル 3.583', value: 3.583 },
+            { name: 'ハイギヤ 3.308', value: 3.308 },
+            { name: 'ローギヤ 3.700', value: 3.700 },
+            { name: 'ローギヤ 3.900', value: 3.900 },
+            { name: 'ローギヤ 4.100', value: 4.100 },
+            { name: 'TRD 4.300', value: 4.300 },
+            { name: 'TRD 4.556', value: 4.556 },
+            { name: 'TRD 4.778', value: 4.778 }
+        ];
+        saveStoredSamples('gear_sim_final_samples', defaults);
+    }
+    if (!localStorage.getItem('gear_sim_mission_samples')) {
+        const defaults = [
+            { name: 'K50ノーマル', gears: [3.789, 2.220, 1.435, 1.000, 0.865, ""] },
+            { name: 'TRD:Aタイプ(ラリー)', gears: [2.889, 1.891, 1.365, 1.000, 0.865, ""] },
+            { name: 'TRD:Bタイプ(高速)', gears: [2.341, 1.607, 1.195, 1.000, 0.886, ""] },
+            { name: 'TRD:Cタイプ(超クロス)', gears: [2.043, 1.487, 1.195, 1.000, 0.886, ""] },
+            { name: 'ルート6', gears: [3.789, 2.611, 1.825, 1.444, 1.000, ""] },
+            { name: 'T50ノーマル', gears: [3.587, 2.022, 1.384, 1.000, 0.861, ""] }
+        ];
+        saveStoredSamples('gear_sim_mission_samples', defaults);
+    }
+}
+
+function updateSampleDropdowns() {
+    const finalSelect = document.getElementById('finalSampleSelect');
+    finalSelect.innerHTML = '<option value="">-- ファイナルサンプルを選択 --</option>';
+    const finals = getStoredSamples('gear_sim_final_samples');
+    finals.forEach((item, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = `${item.name} (${item.value})`;
+        finalSelect.appendChild(opt);
+    });
+
+    const missionSelect = document.getElementById('missionSampleSelect');
+    missionSelect.innerHTML = '<option value="">-- ミッションサンプルを選択 --</option>';
+    const missions = getStoredSamples('gear_sim_mission_samples');
+    missions.forEach((item, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = item.name;
+        missionSelect.appendChild(opt);
+    });
+}
+
+function saveFinalSample() {
+    const val = parseFloat(document.getElementById('finalGear').value);
+    if (isNaN(val)) {
+        alert('有効な数値を入力してください。');
+        return;
+    }
+    const name = prompt('ファイナルサンプルの名前を入力してください:', `ファイナル ${val}`);
+    if (!name) return;
+
+    let finals = getStoredSamples('gear_sim_final_samples');
+    if (finals.length >= MAX_SAMPLES) {
+        alert(`サンプルは最大${MAX_SAMPLES}個までです。`);
+        return;
+    }
+    finals.push({ name: name, value: val });
+    saveStoredSamples('gear_sim_final_samples', finals);
+    updateSampleDropdowns();
+    alert('ファイナルサンプルを登録しました。');
+}
+
+function loadFinalSample() {
+    const index = document.getElementById('finalSampleSelect').value;
+    if (index === "") return;
+    const finals = getStoredSamples('gear_sim_final_samples');
+    const item = finals[index];
+    if (item) {
+        document.getElementById('finalGear').value = item.value;
+        saveInputs();
+    }
+}
+
+function deleteFinalSample() {
+    const select = document.getElementById('finalSampleSelect');
+    const index = select.value;
+    if (index === "") {
+        alert('削除するサンプルを選択してください。');
+        return;
+    }
+    if (!confirm('選択したファイナルサンプルを削除しますか？')) return;
+
+    let finals = getStoredSamples('gear_sim_final_samples');
+    finals.splice(index, 1);
+    saveStoredSamples('gear_sim_final_samples', finals);
+    updateSampleDropdowns();
+    select.value = "";
+}
+
+function saveMissionSample() {
+    const gears = [
+        document.getElementById('gear1').value,
+        document.getElementById('gear2').value,
+        document.getElementById('gear3').value,
+        document.getElementById('gear4').value,
+        document.getElementById('gear5').value,
+        document.getElementById('gear6').value
+    ];
+
+    if (gears.slice(0, 5).some(v => v === "" || isNaN(Number(v)))) {
+        alert('1〜5速のギヤ比には有効な数値を入力してください。');
+        return;
+    }
+
+    const name = prompt('ミッションサンプルの名前を入力してください:', 'クロスミッション');
+    if (!name) return;
+
+    let missions = getStoredSamples('gear_sim_mission_samples');
+    if (missions.length >= MAX_SAMPLES) {
+        alert(`サンプルは最大${MAX_SAMPLES}個までです。`);
+        return;
+    }
+    missions.push({ name: name, gears: gears });
+    saveStoredSamples('gear_sim_mission_samples', missions);
+    updateSampleDropdowns();
+    alert('ミッションサンプルを登録しました。');
+}
+
+function loadMissionSample() {
+    const index = document.getElementById('missionSampleSelect').value;
+    if (index === "") return;
+    const missions = getStoredSamples('gear_sim_mission_samples');
+    const item = missions[index];
+    if (item && item.gears) {
+        for (let i = 0; i < 6; i++) {
+            document.getElementById(`gear${i+1}`).value = item.gears[i] !== undefined ? item.gears[i] : "";
+        }
+        saveInputs();
+    }
+}
+
+function deleteMissionSample() {
+    const select = document.getElementById('missionSampleSelect');
+    const index = select.value;
+    if (index === "") {
+        alert('削除するサンプルを選択してください。');
+        return;
+    }
+    if (!confirm('選択したミッションサンプルを削除しますか？')) return;
+
+    let missions = getStoredSamples('gear_sim_mission_samples');
+    missions.splice(index, 1);
+    saveStoredSamples('gear_sim_mission_samples', missions);
+    updateSampleDropdowns();
+    select.value = "";
+}
+
+// --- グラフ描画およびクリック判定用の座標保持用データ構造 ---
+let chartLayoutCache = null;
+
+function drawComparisonChart(maxRpm, wheelInch, tireWidth, tireFlat, finalGear, gears, beforeState) {
+    const canvas = document.getElementById('comparisonChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    const dpr = window.devicePixelRatio || 1;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, width, height);
+
+    // タイヤ周長計算
+    const wheelMm = wheelInch * 25.4;
+    const sidewallMm = tireWidth * (tireFlat / 100) * 2;
+    const outerDia = wheelMm + sidewallMm;
+    const circM = (outerDia / 1000) * Math.PI;
+
+    const beforeWheelMm = beforeState.wheelInch * 25.4;
+    const beforeSidewallMm = beforeState.tireWidth * (beforeState.tireFlat / 100) * 2;
+    const beforeCircM = ((beforeWheelMm + beforeSidewallMm) / 1000) * Math.PI;
+
+    const padding = { left: 45, right: 30, top: 20, bottom: 30 };
+    const chartW = width - padding.left - padding.right;
+    const chartH = height - padding.top - padding.bottom;
+
+    // 最高速の算出
+    let maxSpeed = 160;
+    const checkSpeed = (rpm, circ, g, fin) => (rpm * circ * 60) / (g * fin * 1000);
+    
+    gears.forEach(g => {
+        if (!isNaN(g) && g > 0 && finalGear > 0) {
+            const s = checkSpeed(maxRpm, circM, g, finalGear);
+            if (s > maxSpeed) maxSpeed = s;
+        }
+    });
+    beforeState.gears.forEach(g => {
+        if (!isNaN(g) && g > 0 && beforeState.finalGear > 0) {
+            const s = checkSpeed(maxRpm, beforeCircM, g, beforeState.finalGear);
+            if (s > maxSpeed) maxSpeed = s;
+        }
+    });
+    maxSpeed = Math.ceil(maxSpeed / 50) * 50;
+
+    // Y軸グリッド
+    ctx.strokeStyle = '#333333';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#aaaaaa';
+    ctx.font = '10px sans-serif';
+
+    const ySteps = 4;
+    for (let i = 0; i <= ySteps; i++) {
+        const speedVal = (maxSpeed / ySteps) * i;
+        const y = padding.top + chartH - (chartH / ySteps) * i;
+        
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(Math.round(speedVal), padding.left - 6, y);
+    }
+    // Y軸ラベル
+    ctx.save();
+    ctx.translate(12, padding.top + chartH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('速度 (km/h)', 0, 0);
+    ctx.restore();
+
+    // X軸グリッド
+    const totalSteps = Math.floor(maxRpm / 1000);
+    for (let rpmStep = 0; rpmStep <= totalSteps; rpmStep++) {
+        const rpmVal = rpmStep * 1000;
+        const x = padding.left + (rpmVal / maxRpm) * chartW;
+
+        ctx.strokeStyle = '#333333';
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, padding.top + chartH);
+        ctx.stroke();
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#aaaaaa';
+        ctx.font = '10px sans-serif';
+        ctx.fillText(rpmStep + 'k', x, padding.top + chartH + 6);
+    }
+    // X軸ラベル
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('回転数 (rpm)', padding.left + chartW / 2, height - 2);
+
+    const colors = ['#3b82f6', '#ef4444', '#22c55e', '#f59e0b', '#a855f7', '#06b6d4'];
+    const rpmPoints = 40;
+
+    // 変更前（破線）描画
+    ctx.setLineDash([4, 4]);
+    beforeState.gears.forEach((gear, idx) => {
+        if (isNaN(gear) || gear <= 0 || beforeState.finalGear <= 0) return;
+        ctx.strokeStyle = colors[idx % colors.length];
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+
+        for (let p = 0; p <= rpmPoints; p++) {
+            const rpm = (maxRpm / rpmPoints) * p;
+            const speed = checkSpeed(rpm, beforeCircM, gear, beforeState.finalGear);
+            const x = padding.left + (rpm / maxRpm) * chartW;
+            const y = padding.top + chartH - (speed / maxSpeed) * chartH;
+            if (p === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    });
+
+    // 変更後（実線）描画
+    ctx.setLineDash([]);
+    gears.forEach((gear, idx) => {
+        if (isNaN(gear) || gear <= 0 || finalGear <= 0) return;
+        ctx.strokeStyle = colors[idx % colors.length];
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+
+        for (let p = 0; p <= rpmPoints; p++) {
+            const rpm = (maxRpm / rpmPoints) * p;
+            const speed = checkSpeed(rpm, circM, gear, finalGear);
+            const x = padding.left + (rpm / maxRpm) * chartW;
+            const y = padding.top + chartH - (speed / maxSpeed) * chartH;
+            if (p === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        const topSpeed = checkSpeed(maxRpm, circM, gear, finalGear);
+        const labelX = padding.left + chartW - 4;
+        const labelY = padding.top + chartH - (topSpeed / maxSpeed) * chartH;
+        
+        ctx.fillStyle = colors[idx % colors.length];
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(`${idx + 1}速`, labelX, labelY - 2);
+    });
+
+    // 1000回転刻みのポイントマーカー
+    for (let rpmStep = 1; rpmStep <= totalSteps; rpmStep++) {
+        const rpm = rpmStep * 1000;
+        const x = padding.left + (rpm / maxRpm) * chartW;
+
+        gears.forEach((gear, idx) => {
+            if (isNaN(gear) || gear <= 0 || finalGear <= 0) return;
+            const speed = checkSpeed(rpm, circM, gear, finalGear);
+            const y = padding.top + chartH - (speed / maxSpeed) * chartH;
+
+            ctx.fillStyle = '#111111';
+            ctx.strokeStyle = colors[idx % colors.length];
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        });
+    }
+
+    chartLayoutCache = {
+        maxRpm, chartW, chartH, padding, maxSpeed, circM, beforeCircM, finalGear, gears, beforeState
+    };
+}
+
+function onChartClick(event) {
+    if (!chartLayoutCache) return;
+    const canvas = document.getElementById('comparisonChart');
+    const rect = canvas.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    const { maxRpm, chartW, chartH, padding, maxSpeed, circM, beforeCircM, finalGear, gears, beforeState } = chartLayoutCache;
+    const totalSteps = Math.floor(maxRpm / 1000);
+
+    let nearestRpm = null;
+    let minDist = 30;
+
+    for (let rpmStep = 1; rpmStep <= totalSteps; rpmStep++) {
+        const rpm = rpmStep * 1000;
+        const x = padding.left + (rpm / maxRpm) * chartW;
+        const dist = Math.abs(clickX - x);
+        if (dist < minDist) {
+            minDist = dist;
+            nearestRpm = rpm;
+        }
+    }
+
+    const tooltip = document.getElementById('chartTooltip');
+
+    if (nearestRpm === null) {
+        tooltip.style.display = 'none';
+        return;
+    }
+
+    const checkSpeed = (rpm, circ, g, fin) => (rpm * circ * 60) / (g * fin * 1000);
+    
+    let html = `<strong>【 ${nearestRpm.toLocaleString()} rpm 】</strong><br>`;
+    html += `<hr style="border:0; border-top:1px solid #333333; margin:4px 0;">`;
+    html += `<table style="font-size:12px; width:100%; text-align:left; color:#fff; background:transparent;">`;
+    html += `<tr><th style="background:transparent; border-color:#333;">ギヤ</th><th style="background:transparent; border-color:#333;">変更後</th><th style="background:transparent; border-color:#333;">変更前</th></tr>`;
+
+    gears.forEach((gear, idx) => {
+        if (isNaN(gear) || gear <= 0) return;
+        const curSpeed = checkSpeed(nearestRpm, circM, gear, finalGear);
+        
+        let beforeSpeedStr = '-';
+        const beforeGear = beforeState.gears[idx];
+        if (!isNaN(beforeGear) && beforeGear > 0 && beforeState.finalGear > 0) {
+            const bSpeed = checkSpeed(nearestRpm, beforeCircM, beforeGear, beforeState.finalGear);
+            beforeSpeedStr = bSpeed.toFixed(1) + ' km/h';
+        }
+
+        html += `<tr>`;
+        html += `<td style="border-color:#333;"><b>${idx + 1}速</b></td>`;
+        html += `<td style="border-color:#333; color:#60a5fa;"><b>${curSpeed.toFixed(1)} km/h</b></td>`;
+        html += `<td style="border-color:#333; color:#aaaaaa;">${beforeSpeedStr}</td>`;
+        html += `</tr>`;
+    });
+    html += `</table>`;
+
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+
+    const tooltipX = Math.min(clickX + 15, canvas.clientWidth - 220);
+    const tooltipY = Math.max(clickY - 80, 10);
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+}
+
+function calculate() {
+    const wheelInch = parseFloat(document.getElementById('wheelInch').value) || 0;
+    const tireWidth = parseFloat(document.getElementById('tireWidth').value) || 0;
+    const tireFlat = parseFloat(document.getElementById('tireFlat').value) || 0;
+    const maxRpm = parseFloat(document.getElementById('maxRpmInput').value) || 9000;
+    const finalGear = parseFloat(document.getElementById('finalGear').value) || 0;
+
+    const gears = [
+        parseFloat(document.getElementById('gear1').value),
+        parseFloat(document.getElementById('gear2').value),
+        parseFloat(document.getElementById('gear3').value),
+        parseFloat(document.getElementById('gear4').value),
+        parseFloat(document.getElementById('gear5').value),
+        parseFloat(document.getElementById('gear6').value)
+    ];
+
+    const wheelMm = wheelInch * 25.4;
+    const sidewallMm = tireWidth * (tireFlat / 100) * 2;
+    const outerDiameterMm = wheelMm + sidewallMm;
+    const circumferenceM = (outerDiameterMm / 1000) * Math.PI;
+
+    document.getElementById('tireOuterDia').innerText = 
+        `計算タイヤ外径: ${outerDiameterMm.toFixed(1)} mm (周長: ${(circumferenceM * 1000).toFixed(1)} mm)`;
+
+    const tbody = document.querySelector('#resultTable tbody');
+    tbody.innerHTML = '';
+
+    for (let rpm = 1000; rpm <= maxRpm; rpm += 1000) {
+        const row = document.createElement('tr');
+        const rpmCell = document.createElement('td');
+        rpmCell.style.fontWeight = 'bold';
+        rpmCell.innerText = rpm.toLocaleString() + ' rpm';
+        row.appendChild(rpmCell);
+
+        gears.forEach(gearRatio => {
+            const speedCell = document.createElement('td');
+            if (!isNaN(gearRatio) && gearRatio > 0 && finalGear > 0) {
+                const speed = (rpm * circumferenceM * 60) / (gearRatio * finalGear * 1000);
+                speedCell.innerText = speed.toFixed(1);
+            } else {
+                speedCell.innerText = '-';
+            }
+            row.appendChild(speedCell);
+        });
+        tbody.appendChild(row);
+    }
+    if (maxRpm % 1000 !== 0) {
+        const row = document.createElement('tr');
+        const rpmCell = document.createElement('td');
+        rpmCell.style.fontWeight = 'bold';
+        rpmCell.innerText = maxRpm.toLocaleString() + ' rpm';
+        row.appendChild(rpmCell);
+
+        gears.forEach(gearRatio => {
+            const speedCell = document.createElement('td');
+            if (!isNaN(gearRatio) && gearRatio > 0 && finalGear > 0) {
+                const speed = (maxRpm * circumferenceM * 60) / (gearRatio * finalGear * 1000);
+                speedCell.innerText = speed.toFixed(1);
+            } else {
+                speedCell.innerText = '-';
+            }
+            row.appendChild(speedCell);
+        });
+        tbody.appendChild(row);
+    }
+
+    const beforeState = getBeforeState();
+    drawComparisonChart(maxRpm, wheelInch, tireWidth, tireFlat, finalGear, gears, beforeState);
+    
+    document.getElementById('beforeInfo').innerText = `基準値: 外径 ${(beforeState.wheelInch * 25.4 + beforeState.tireWidth * (beforeState.tireFlat / 100) * 2).toFixed(1)}mm, Fin ${beforeState.finalGear}`;
+}
+
+window.onload = function() {
+    initDefaultSamples();
+    loadInputs();
+    initBeforeState();
+    updateSampleDropdowns();
+    calculate();
+};
+</script>
+
+</body>
+</html>
