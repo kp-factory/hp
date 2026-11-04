@@ -65,6 +65,11 @@
             text-align: center;
             flex-grow: 1;
             margin: 0;
+            text-decoration: none;
+        }
+
+        .navbar-title:hover {
+            text-decoration: underline;
         }
 
         @media screen and (max-width: 480px) {
@@ -101,12 +106,15 @@
         }
 
         .top-content {
-            padding-top: 95px;
+            padding-top: 85px;
             padding-bottom: 20px;
         }
 
         h1 {
-            display: none; /* ナビバーのタイトルと重複するため非表示 */
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0 25px 0;
+            color: #ffffff;
         }
 
         .card {
@@ -421,7 +429,7 @@
           <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
         </a>
       </li>
-      <li class="navbar-title">ギヤ比・速度計算シミュレーター</li>
+      <li><a href="tool_index.html" class="navbar-title">TOOL</a></li>
       <li class="nav-right-space"></li>
     </ul>
   </nav>
