@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KP-ファクトリー Website / Member - TOYOTA</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    /* --- ナビゲーションバー --- */
+    .navbar {
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      border-bottom: 1px solid #333333;
+      box-sizing: border-box;
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      height: 60px;
+    }
+
+    .nav-left-space,
+    .nav-right-item {
+      width: 90px; 
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-right-item {
+      justify-content: flex-end;
+    }
+
+    .navbar-title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    @media screen and (max-width: 480px) {
+      .nav-left-space {
+        width: 10px;
+      }
+      .navbar-title {
+        font-size: 16px;
+      }
+    }
+
+    .nav-menu a {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+
+    /* --- コンテンツ用共通クラス --- */
+    .content-container {
+      width: 98%;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: left;
+      box-sizing: border-box;
+      font-weight: bold;
+    }
+
+    .top-content {
+      padding-top: 85px;
+      padding-bottom: 40px;
+    }
+
+    .member-title {
+      text-align: center;
+      font-size: 22px;
+      margin: 0 0 20px 0;
+      color: #ffffff;
+      padding-bottom: 10px;
+    }
+
+    .profile-section {
+      background-color: #111111;
+      border: 1px solid #333333;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 25px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .section-heading {
+      font-size: 16px;
+      margin: 20px 0 10px 0;
+      color: #cccccc;
+    }
+
+    /* 軌跡タイトルのスタイル */
+    .history-title {
+      text-align: center;
+      font-size: 18px;
+      margin: 40px 0 20px 0;
+      color: #ffffff;
+    }
+
+    /* 画像ギャラリー・グリッドスタイル (スマホ対応) */
+    .image-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .image-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .image-container {
+      max-width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .content-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #333333;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* スペックテーブル用スタイル */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+      background-color: #111111;
+      table-layout: fixed;
+    }
+
+    .spec-table th, .spec-table td {
+      border: 1px solid #333333;
+      padding: 10px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .spec-label-col {
+      width: 20% !important;
+      background-color: #1a1a1a;
+      color: #cccccc;
+      text-align: center;
+    }
+
+    .spec-val-col {
+      width: 75% !important;
+      word-break: break-all;
+    }
+
+    @media screen and (max-width: 600px) {
+      .spec-table th, .spec-table td {
+        font-size: 12px;
+        padding: 8px;
+      }
+    }
+
+
+    /* --- フッターエリア --- */
+    .footer-container {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 40px;
+    }
+
+    /* ページネーションボタン用スタイル */
+    .pagination-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 15px;
+    }
+
+    .pagination-btn {
+      color: #ffffff;
+      background-color: #1a1a1a;
+      border: 1px solid #333333;
+      padding: 8px 20px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .pagination-btn:hover {
+      background-color: #333333;
+      border-color: #666666;
+    }
+
+    .footer-divider {
+      border: none;
+      border-top: 1px solid #333333;
+      width: 100%;
+      margin: 0 0 20px 0;
+    }
+
+    .footer-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 30px;
+      gap: 8px;
+    }
+
+    .footer-link {
+      color: #666666;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li class="navbar-title">Member</li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+  <!-- コンテンツエリア -->
+  <main class="content-container top-content">
+    <h3 class="member-title">TOYOTA</h3>
+
+    <!-- プロフィールエリア -->
+    <div class="profile-section">
+      <div style="font-size: 16px; margin-bottom: 8px; color: #cccccc; border-bottom: 1px solid #333333; padding-bottom: 4px;">プロフィール<BR> </div>      何かひとこと書くスペース<br>
+    </div>
+
+    <table class="spec-table">
+      <tr>
+        <td class="spec-val-col">Car Specs<br>
+        現在の車、TUNE DATA を記載<br><br><br></td>
+      </tr>
+    </table>
+
+   <div class="image-grid">
+      <div class="image-row">
+        <div class="image-container"><img src="toyo08.jpg" alt="toyo08"></div>
+        <div class="image-container"><img src="toyo08.jpg" alt="toyo08"></div>
+       </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo08.jpg" alt="toyo08"></div>
+    <!--      </div>
+      <div class="image-row"> -->
+        <div class="image-container"><img src="toyo08.jpg" alt="toyo08"></div>
+      </div>
+    </div>
+
+
+    <!-- プロフィールセクション -->
+    <!--    <div class="profile-section">
+      プロフィール<br><br>
+       製造：Ｓ４２年<br>
+       車歴：ＫＰ（十数台）→ＴＥ７１<br>
+       特徴：ゼロカウンター走りのマシンコントロールはファクトリーＮｏ．１！？<br>
+           メタリカサウンドをこよなく愛すハードロックおやじ
+    </div>
+ -->
+ 
+ 
+     <!-- 軌跡エリアタイトル -->
+    <div class="history-title">ー 軌跡 ー</div><BR>
+    
+    
+    <!-- 過去の仕様 / 軌跡 Spec -->
+    <!--    <div class="section-heading">Car Specs</div> -->
+    
+    <table class="spec-table">
+      <tr>
+        <td class="spec-val-col">Car Specs<BR>
+        羊の皮を被った狼のふりをする山羊！！<br>
+        4A-GZ，ブーストUPプ－リー，タコ足＆マフラー，SAFC，オイルクーラー，他<br>
+        フロントTRDガスショック＋7kg/mm，ピロアッパーマウント，リアTRDガスショック＋6kg/mm，ウレタン＆強化ゴムブッシュ
+      </td>
+      </tr>
+    </table>
+
+
+        
+
+     <!-- 
+    <div class="section-heading">スペック</div>
+    <table class="spec-table">
+      <tr>
+        <td class="spec-label-col">コンセプト</td>
+        <td class="spec-val-col">羊の皮を被った狼のふりをする山羊！！</td>
+      </tr>
+      <tr>
+        <td class="spec-label-col">エンジン</td>
+        <td class="spec-val-col">4A-GZ，ブーストUPプ－リー，タコ足＆マフラー，SAFC，オイルクーラー，他</td>
+      </tr>
+      <tr>
+        <td class="spec-label-col">足廻り</td>
+        <td class="spec-val-col">フロントTRDガスショック＋7kg/mm，ピロアッパーマウント<br>
+        リアTRDガスショック＋6kg/mm，ウレタン＆強化ゴムブッシュ</td>
+      </tr>
+    </table> -->
+
+
+
+     <!--     <div class="section-heading">マシ～ン</div> -->
+    <div class="image-grid">
+      <div class="image-row">
+        <div class="image-container"><img src="toyo10.jpg" alt="toyo10"></div>
+        <div class="image-container"><img src="toyo11.jpg" alt="toyo11"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo14.jpg" alt="toyo14"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo13.jpg" alt="toyo13"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo15.jpg" alt="toyo15"></div>
+      </div>
+    </div>
+
+    <div class="image-grid">
+      <div class="image-row">
+        <div class="image-container"><img src="toyo01.jpg" alt="toyo01"></div>
+        <div class="image-container"><img src="toyo02.jpg" alt="toyo02"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo04.jpg" alt="toyo04"></div>
+        <div class="image-container"><img src="toyo06.jpg" alt="toyo06"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo05.jpg" alt="toyo05"></div>
+        <div class="image-container"><img src="toyo03.jpg" alt="toyo03"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="toyo08.jpg" alt="toyo08"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <div class="pagination-wrapper">
+      <a href="take.html" class="pagination-btn">←Back</a>
+      <a href="tsunashima.html" class="pagination-btn">next→</a>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+</body>
+</html>
