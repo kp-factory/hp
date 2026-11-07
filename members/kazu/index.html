@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KP-ファクトリー Website / Member - 入江</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    /* --- ナビゲーションバー --- */
+    .navbar {
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      border-bottom: 1px solid #333333;
+      box-sizing: border-box;
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      height: 60px;
+    }
+
+    .nav-left-space,
+    .nav-right-item {
+      width: 90px; 
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-right-item {
+      justify-content: flex-end;
+    }
+
+    .navbar-title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    @media screen and (max-width: 480px) {
+      .nav-left-space {
+        width: 10px;
+      }
+      .navbar-title {
+        font-size: 16px;
+      }
+    }
+
+    .nav-menu a {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+
+    /* --- コンテンツ用共通クラス --- */
+    .content-container {
+      width: 98%;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: left;
+      box-sizing: border-box;
+      font-weight: bold;
+    }
+
+    .top-content {
+      padding-top: 85px;
+      padding-bottom: 40px;
+    }
+
+    .member-title {
+      text-align: center;
+      font-size: 22px;
+      margin: 0 0 20px 0;
+      color: #ffffff;
+      padding-bottom: 10px;
+    }
+
+    .profile-section {
+      background-color: #111111;
+      border: 1px solid #333333;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 25px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .section-heading {
+      font-size: 16px;
+      margin: 20px 0 10px 0;
+      color: #cccccc;
+    }
+
+    /* 軌跡タイトルのスタイル */
+    .history-title {
+      text-align: center;
+      font-size: 18px;
+      margin: 40px 0 20px 0;
+      color: #ffffff;
+    }
+
+    /* 画像ギャラリー・グリッドスタイル (スマホ対応) */
+    .image-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .image-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .image-container {
+      max-width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .content-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #333333;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* スペックテーブル用スタイル */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+      background-color: #111111;
+      table-layout: fixed;
+    }
+
+    .spec-table th, .spec-table td {
+      border: 1px solid #333333;
+      padding: 10px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .spec-label-col {
+      width: 20% !important;
+      background-color: #1a1a1a;
+      color: #cccccc;
+      text-align: center;
+    }
+
+    .spec-val-col {
+      width: 75% !important;
+      word-break: break-all;
+    }
+
+    @media screen and (max-width: 600px) {
+      .spec-table th, .spec-table td {
+        font-size: 12px;
+        padding: 8px;
+      }
+    }
+
+    /* --- フッターエリア --- */
+    .footer-container {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 40px;
+    }
+
+    .pagination-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 15px;
+    }
+
+    .pagination-btn {
+      color: #ffffff;
+      background-color: #1a1a1a;
+      border: 1px solid #333333;
+      padding: 8px 20px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .pagination-btn:hover {
+      background-color: #333333;
+      border-color: #666666;
+    }
+
+    .footer-divider {
+      border: none;
+      border-top: 1px solid #333333;
+      width: 100%;
+      margin: 0 0 20px 0;
+    }
+
+    .footer-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 30px;
+      gap: 8px;
+    }
+
+    .footer-link {
+      color: #666666;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li class="navbar-title">Member</li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+  <!-- コンテンツエリア -->
+  <main class="content-container top-content">
+    <h3 class="member-title">入江</h3>
+
+    <!-- プロフィールエリア -->
+    <div class="profile-section">
+      <div style="font-size: 16px; margin-bottom: 8px; color: #cccccc; border-bottom: 1px solid #333333; padding-bottom: 4px;">プロフィール<BR> </div>      何かひとこと書きましょう<br>
+    </div>
+
+    <!-- 現在の車 Spec -->
+    <!--    <div class="history-title">ー 現在 ー</div> -->
+    <!--        <div class="section-heading">Car Specs</div> -->
+    
+    <table class="spec-table">
+      <tr>
+        <td class="spec-val-col">Car Specs :<BR>現在の車名、TUNE DATA を記載<BR><BR><BR></td>
+      </tr>
+    </table>
+
+    <!-- 現在の車の写真（4枚程度） -->
+    <div class="image-grid">
+      <div class="image-row">
+        <div class="image-container"><img src="kazu_Photo_261101_31s.jpg" alt="kazu_Photo_261101_31s"></div>
+        <div class="image-container"><img src="kazu_Photo_261101_4s.jpg" alt="kazu_Photo_261101_4s"></div>
+      </div>
+          <!-- 
+      <div class="image-row">
+        <div class="image-container"><img src="iri01S.jpg" alt="iri01S"></div>
+        <div class="image-container"><img src="iri03S.jpg" alt="iri03S"></div>
+      </div> -->
+    </div>
+
+    <!-- 軌跡エリアタイトル -->
+    <div class="history-title">ー 軌跡 ー</div>
+
+    <!-- 過去の仕様 / 軌跡 Spec -->
+    <!--    <div class="section-heading">Car Specs</div> -->
+    
+    <table class="spec-table">
+      <tr>
+        <td class="spec-val-col">Car Specs :<BR>4K改 4K-Uピストン＋レーザーヘッド＋ノーマルガスケット2枚（鬼ハイコンプ），70度加工カム，TRDバルブスプリング，ソレックス40＋ハラダインマニ，フジツボタコ足＋フジツボマフラー，フロントTRDガスショック＋5.1kg/mm，リアTRDオイルショック＋4.2kg/mm，ビタローニ，有り合わせの残り物パーツで作ったワリには速かったよ<BR></td>
+      </tr>
+    </table>
+    
+    <div class="image-grid">
+      <div class="image-row">
+        <div class="image-container"><img src="iri04S.jpg" alt="iri04S"></div>
+        <div class="image-container"><img src="iri02S.jpg" alt="iri02S"></div>
+      </div>
+      <div class="image-row">
+        <div class="image-container"><img src="iri01S.jpg" alt="iri01S"></div>
+        <div class="image-container"><img src="iri03S.jpg" alt="iri03S"></div>
+      </div>
+    </div>
+    
+    <div class="image-grid">
+      <div class="image-row">
+        <div class="image-container"><img src="iri05S.jpg" alt="iri05S"></div>
+      </div>
+    </div>
+  </main>
+
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <div class="pagination-wrapper">
+      <a href="kanbe.html" class="pagination-btn">←Back</a>
+      <a href="kenji.html" class="pagination-btn">next→</a>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+</body>
+</html>
