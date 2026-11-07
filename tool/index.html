@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>KP-ファクトリー Website / TOOL</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: bold; /* 本文を太字に設定 */
+    }
+
+    /* --- ナビゲーションバー --- */
+    .navbar {
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      border-bottom: 1px solid #333333;
+      box-sizing: border-box;
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      height: 60px; /* ナビバーの高さを固定 */
+    }
+
+    /* 左右のボックスの幅を右側のロゴ画像の大きさに合わせて揃えることで中央を正確に出す */
+    .nav-left-space,
+    .nav-right-item {
+      width: 90px; 
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-right-item {
+      justify-content: flex-end;
+    }
+
+    .navbar-title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    /* スマホなどで画面が狭いときに文字が右側画像に隠れないよう、余白を調整して中央寄せをキープする */
+    @media screen and (max-width: 480px) {
+      .nav-left-space {
+        width: 10px; /* 左側の無駄なスペースを縮めて、文字を右側画像の重なりから逃がす */
+      }
+      .navbar-title {
+        font-size: 16px;
+      }
+    }
+
+    .nav-menu a {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+
+    /* --- 文章・コンテンツ用共通クラス (レスポンシブ対応) --- */
+    .content-container {
+      width: 98%;
+      max-width: 740px;
+      margin: 0 auto;
+      text-align: left;
+      box-sizing: border-box;
+      font-weight: bold;
+    }
+
+    .top-content {
+      padding-top: 75px;
+      padding-bottom: 20px;
+    }
+
+    /* --- リンクテーブル用スタイル --- */
+    .link-section-title {
+      font-size: 18px;
+      margin: 25px 0 10px 0;
+      border-bottom: 1px solid #333333;
+      padding-bottom: 5px;
+      color: #cccccc;
+    }
+
+    .link-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: #111111;
+      table-layout: fixed; /* テーブル幅を固定してスマホでの崩れを防止 */
+    }
+
+    .link-table th, .link-table td {
+      border: 1px solid #333333;
+      padding: 10px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #ffffff;
+      box-sizing: border-box;
+    }
+
+    /* 画像列の幅をPC・スマホ共通で160pxに固定 */
+    .link-img-col {
+      width: 160px !important;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .link-table img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 4px;
+    }
+
+    /* ツールリンク用スタイル */
+    .tool-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .tool-link:hover {
+      text-decoration: underline;
+      color: #60a5fa;
+    }
+
+    .tool-desc {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: normal;
+    }
+
+    /* スマホ表示時でも文字エリアが下に落ちず、右横に並び続ける設定 */
+    @media screen and (max-width: 600px) {
+      .link-img-col {
+        width: 110px !important;
+        min-width: 110px;
+      }
+      .link-table td {
+        font-size: 12px; /* スマホ画面に合わせて文字サイズを少し調整 */
+        padding: 8px;
+        word-break: break-all; /* 長い文字が枠からはみ出さず自動改行するように */
+      }
+      .tool-link {
+        font-size: 14px;
+      }
+    }
+
+    .link-note {
+      text-align: center;
+      font-size: 14px;
+      margin: 30px 0;
+      color: #aaaaaa;
+    }
+
+    /* --- フッターエリア（中央2列配置＆トップページリンク用） --- */
+    .footer-container {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 40px;
+    }
+
+    .footer-divider {
+      border: none;
+      border-top: 1px solid #333333;
+      width: 100%;
+      margin: 0 0 20px 0;
+    }
+
+    .footer-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 30px;
+      gap: 8px; /* 1段目と2段目の間隔 */
+    }
+
+    .footer-link {
+      color: #666666; /* 文字の色を少し薄めに調整 */
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="../index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li class="navbar-title">TOOL</li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+  <!-- コンテンツエリア -->
+  <main class="content-container top-content">
+    <!-- 
+    <div class="link-section-title">公開ツール一覧</div>
+    -->
+    <table class="link-table">
+      <tr>
+        <td class="link-img-col">
+          <a href="GearSpeed​​Calc.html">
+            <img src="image/gearspeed.jpg" alt="GearSpeed Calc">
+          </a>
+        </td>
+        <td>
+          <a href="GearSpeed​​Calc.html" class="tool-link">ギヤ比・速度計算シミュレーター</a>
+          <div class="tool-desc">タイヤサイズ、ファイナルギヤ、ミッションギヤ比から各回転数の速度を算出・比較できるシミュレーターです。</div>
+        </td>
+      </tr>
+      <!-- 
+        【今後ツールを追加する場合は以下の行をコピーして増やしてください】
+      <tr>
+        <td class="link-img-col">
+          <a href="next_tool.html">
+            <img src="../image1/next_tool_img.jpg" alt="Tool Name">
+          </a>
+        </td>
+        <td>
+          <a href="next_tool.html" class="tool-link">ツールのタイトル</a>
+          <div class="tool-desc">ツールの説明文をここに記載します。</div>
+        </td>
+      </tr>
+      -->
+    </table>
+  </main>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+</body>
+</html>
