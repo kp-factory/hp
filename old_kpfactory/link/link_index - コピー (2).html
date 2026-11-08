@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>KP-ファクトリー Website / LINK</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: bold; /* 本文を太字に設定 */
+    }
+
+    /* --- ナビゲーションバー --- */
+    .navbar {
+      background-color: #000000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      border-bottom: 1px solid #333333;
+      box-sizing: border-box;
+    }
+
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      height: 60px; /* ナビバーの高さを固定 */
+    }
+
+    /* 左右のボックスの幅を右側のロゴ画像の大きさに合わせて揃えることで中央を正確に出す */
+    .nav-left-space,
+    .nav-right-item {
+      width: 80px; 
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-right-item {
+      justify-content: flex-end;
+    }
+
+    .navbar-title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    .nav-menu a {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+
+    /* --- 文章・コンテンツ用共通クラス (レスポンシブ対応) --- */
+    .content-container {
+      width: 98%;
+      max-width: 740px;
+      margin: 0 auto;
+      text-align: left;
+      box-sizing: border-box;
+      font-weight: bold;
+    }
+
+    .top-content {
+      padding-top: 75px;
+      padding-bottom: 20px;
+    }
+
+    /* --- リンクテーブル用レスポンシブスタイル --- */
+    .link-section-title {
+      font-size: 18px;
+      margin: 25px 0 10px 0;
+      border-bottom: 1px solid #333333;
+      padding-bottom: 5px;
+      color: #cccccc;
+    }
+
+    .link-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: #111111;
+    }
+
+    .link-table th, .link-table td {
+      border: 1px solid #333333;
+      padding: 10px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    .link-table img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* スマホ対応：テーブルのレイアウト崩れ防止 */
+    @media screen and (max-width: 600px) {
+      .link-table, .link-table tbody, .link-table tr, .link-table td {
+        display: block;
+        width: 100% !important;
+        box-sizing: border-box;
+      }
+      .link-table tr {
+        margin-bottom: 15px;
+        border: 1px solid #444;
+      }
+      .link-table td {
+        border: none;
+        border-bottom: 1px solid #222;
+      }
+    }
+
+    .link-note {
+      text-align: center;
+      font-size: 14px;
+      margin: 30px 0;
+      color: #aaaaaa;
+    }
+
+    /* --- フッターエリア（画面幅いっぱいに広げて左右端へ配置） --- */
+    .footer-container {
+      width: 100vw; /* 画面幅いっぱい */
+      margin-left: calc(50% - 50vw);
+      box-sizing: border-box;
+      margin-top: 40px;
+    }
+
+    .footer-divider {
+      border: none;
+      border-top: 1px solid #333333;
+      width: 100%;
+      margin: 0 0 20px 0;
+    }
+
+    .footer-image-wrapper {
+      display: flex;
+      justify-content: space-between; /* 左右に配置 */
+      align-items: center;
+      width: 100%;
+      max-width: none; /* 最大幅の制限を解除してブラウザの端まで広げる */
+      margin: 0;
+      padding: 0 30px; /* ブラウザの端から少し内側に余白を取る */
+      padding-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    .footer-since {
+      font-size: 14px;
+      color: #888888;
+      margin: 0;
+      font-weight: bold;
+      text-align: left; /* 左寄せ */
+    }
+
+    .footer-copyright {
+      font-size: 14px;
+      color: #888888;
+      margin: 0;
+      font-weight: bold;
+      text-align: right; /* 右寄せ */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-space"></li>
+      <li class="navbar-title">LINK</li>
+      <li class="nav-right-item">
+        <a href="../index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- コンテンツエリア -->
+  <div class="content-container top-content">
+    
+    <!-- Sponsor -->
+    <div class="link-section-title">Sponsor（50音順）</div>
+    <table class="link-table">
+      <tbody>
+        <tr>
+          <td align="center" style="width: 140px;"><a href="http://www.estremo.jp/" target="_blank"><img src="banner/attack.gif" border="0" alt="ATTACK RACING"></a></td>
+          <td>OILと添加材をご提供いただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><img src="banner/asuka.gif" border="0" alt="Garage飛鳥"></td>
+          <td>ボディワークの強い味方。塗料・その他をご提供いただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.pg-toolbox.co.jp/" target="_blank">TOOL BOX</a></td>
+          <td>プライベートチューンの強い味方。様々なパーツをご提供いただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.bowerhouse-japan.com/" target="_blank"><img src="banner/bhj.jpg" border="0" alt="BOWER HOUSE JAPAN"></a></td>
+          <td>支配人様にご支援いただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.laile.co.jp/company.html" target="_blank">BUTLER246</a></td>
+          <td>ベース車両をご提供いただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.ceres.gr.jp/~volcano/" target="_blank"><img src="banner/title02.gif" border="0" alt="Volcano"></a></td>
+          <td>フルオーダーマフラーショップです。超軽量で美しいチタンマフラーを製作していただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.project-mu.co.jp/" target="_blank"><img src="banner/pmwber2.gif" border="0" alt="Project μ"></a></td>
+          <td>お気に入りのブレーキパッド「Project μ」。ブレーキパッド、ブレーキフルードをご提供いただきました。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.worksbell.co.jp/" target="_blank"><img src="banner/wb_banner01.gif" border="0" alt="Works Bell"></a></td>
+          <td>ステアリングボスをはじめ、様々なご支援をいただきました。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- RACE -->
+    <div class="link-section-title">RACE</div>
+    <table class="link-table">
+      <tbody>
+        <tr>
+          <td align="center" style="width: 140px;"><a href="http://www.jcca.cc/" target="_blank"><img src="banner/JCCArogo.gif" border="0" alt="JCCA"></a></td>
+          <td>クラシックカーレースの主催者様</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Friends -->
+    <div class="link-section-title">Friends</div>
+    <table class="link-table">
+      <tbody>
+        <tr>
+          <td align="center" style="width: 140px;"><a href="http://www.geocities.jp/onecam8ohv/" target="_blank"><img src="banner/nichinen.gif" border="0" alt="日本燃圧協会"></a></td>
+          <td>宮城のKP集団</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.mars.dti.ne.jp/~busters/index.html" target="_blank"><img src="banner/busters.gif" border="0" alt="BUSTERS"></a></td>
+          <td>2T-Gオーナーズクラブ</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.geocities.co.jp/MotorCity-Circuit/2991/index.html" target="_blank"><img src="banner/kakkun.gif" border="0" alt="かっくん"></a></td>
+          <td>かっくんさん</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.group5-web.com" target="_blank"><img src="banner/group5.gif" border="0" alt="Group5"></a></td>
+          <td>70系カローラオーナーズクラブ</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.ne.jp/asahi/opoyon/kppk/" target="_blank"><img src="banner/opoyon.jpg" border="0" alt="おぽよんち"></a></td>
+          <td>おぽよんさん</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.geocities.co.jp/MotorCity-Circuit/9385/index.html" target="_blank"><img src="banner/kgare.gif" border="0" alt="Ｋガレーヂ"></a></td>
+          <td>日本燃圧協会、Ｋ．さとー氏</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://lvs2000-web.hp.infoseek.co.jp/" target="_blank"><img src="banner/dogfight.jpg" border="0" alt="DogFight"></a></td>
+          <td>赤城のあばれん坊。熱い走りに注目。</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.germanz.net" target="_blank"><img src="banner/ger_btn2.gif" border="0" alt="Germanz.net"></a></td>
+          <td>有名ショップ「石塚自動車」に集う人々</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.taiyaya.jp/~taiyaya/" target="_blank"><img src="banner/taiyayabana2s.gif" border="0" alt="太伊矢屋"></a></td>
+          <td>太伊矢屋さん</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://hk.geocities.com/starletfans/" target="_blank"><img src="banner/starletfans.jpg" border="0" alt="Starlet Fans"></a></td>
+          <td>香港のKP61 Fans、Mr Tsang sir</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.hi-ho.ne.jp/datsun-dream/" target="_blank"><img src="banner/datsun-dream.jpg" border="0" alt="Datsun Dream"></a></td>
+          <td>Datsun Dreamさん</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.club-k.co.nz/" target="_blank"><img src="banner/clubklogo.jpg" border="0" alt="Club K"></a></td>
+          <td>ニュージーランドのMr Jamie Hodgins が所属する「Club K」</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www1.ocn.ne.jp/~aori/" target="_blank"><img src="banner/bbc_logo_s.gif" border="0"></a></td>
+          <td>TSカップにサニーで参戦されている「BCC Factory」さん</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www8.plala.or.jp/workshop-09/sunny.html" target="_blank"><img src="banner/sunny01.gif" border="0" alt="310-SUNNY PAGE"></a></td>
+          <td>TSカップに参戦されているOGURAさんのサイト「310-SUNNY PAGE」</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.toho-p.ne.jp/st/" target="_blank"><img src="banner/oyaji.gif" border="0"></a></td>
+          <td>九州の旧車愛好会「サニトラ親父の部屋」</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://bravery.net.dhis.org/index.htm" target="_blank"><img src="banner/bravery.jpg" border="0"></a></td>
+          <td>「ブレイバリィ」さん</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.geocities.jp/racinghouse_atom/index.htm" target="_blank"><img src="banner/atom.gif" border="0"></a></td>
+          <td>「RacingHouse亜斗夢」さん、カフェトレドトリイサニーが復活！必見です</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.geocities.jp/takes_hira/index.html" target="_blank"><img src="banner/gogokp.jpg" border="0"></a></td>
+          <td>ガレージモリムラチューンの凄いKPに乗るtakeさん</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Magazin -->
+    <div class="link-section-title">Magazin</div>
+    <table class="link-table">
+      <tbody>
+        <tr>
+          <td align="center" style="width: 140px;"><a href="http://www.microbrain.co.jp/CARBOY/" target="_blank"><img src="banner/carboy.gif" border="0" alt="CARBOY"></a></td>
+          <td>CARBOY</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.sun-a.com/option/" target="_blank"><img src="banner/option.gif" border="0" alt="OPTION"></a></td>
+          <td>OPTION</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="http://www.neko.co.jp/guest/magazine/jstipo/index.html" target="_blank"><img src="banner/mag_jstipo.gif" border="0" alt="J's Tipo"></a></td>
+          <td>J's Tipo</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="link-note">
+      当サイトはリンクフリーです、相互リンクはメールにてご連絡ください。
+    </div>
+
+  </div>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-image-wrapper">
+      <span class="footer-since">Since 1985</span>
+      <span class="footer-copyright">Copyright© 2001 KP-ファクトリー</span>
+    </div>
+  </footer>
+
+</body>
+</html>
