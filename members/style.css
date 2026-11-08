@@ -185,12 +185,46 @@ body {
   word-break: break-all;
 }
 
-@media screen and (max-width: 600px) {
+/*
+ @media screen and (max-width: 600px) {
   .spec-table th, .spec-table td {
     font-size: 12px;
     padding: 8px;
   }
 }
+ */
+
+@media screen and (max-width: 600px) {
+  /* テーブルのセル幅を均等にし、パディングを狭くして収まりやすくする */
+  .spec-table {
+    width: 100% !important;
+    table-layout: fixed;
+  }
+  
+  .spec-table th, .spec-table td {
+    font-size: 11px; /* スマホで文字が収まるように少し小さくする */
+    padding: 6px 2px; /* 左右の余白を詰めることで「TSUNASHIMA」などの長い名前も収まるようにする */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+
+
+
+
+/* メンバーリンクリストの文字色を白色にする */
+.spec-table a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.spec-table a:hover {
+  color: #dddddd;
+  text-decoration: underline;
+}
+
 
 /* --- フッターエリア --- */
 .footer-container {
