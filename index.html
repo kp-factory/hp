@@ -22,12 +22,12 @@
       margin: 0 0 15px 0;
       font-weight: bold;
       letter-spacing: 1px;
-      color: #cccccc; /* 少しだけグレーに調整 */
+      color: #cccccc;
     }
 
     /* --- 「Welcome to」の部分だけ少し小さくするスタイル --- */
     .welcome-title .small-text {
-      font-size: 0.8em; /* 親要素の70%の大きさに調整 */
+      font-size: 0.8em;
       font-weight: normal; 
     }
 
@@ -159,34 +159,32 @@
       padding-bottom: 20px;
     }
 
-/* --- スマホ対応の流れる文字スタイル --- */
-  .marquee-container {
-    width: 100%;
-    max-width: 400px;
-    margin: 5px auto;
-    overflow: hidden;
-    white-space: nowrap;
-    box-sizing: border-box;
-  }
-
-  .marquee-text {
-    display: inline-block;
-    padding-left: 100%;
-    animation: marquee 12s linear infinite;
-    font-size: 15px;
-    color: #ffffff;
-  }
-
-  @keyframes marquee {
-    0% {
-      transform: translate(0, 0);
+    /* --- スマホ対応の流れる文字スタイル --- */
+    .marquee-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 5px auto;
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
     }
-    100% {
-      transform: translate(-100%, 0);
+
+    .marquee-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 12s linear infinite;
+      font-size: 15px;
+      color: #ffffff;
     }
-  }
 
-
+    @keyframes marquee {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(-100%, 0);
+      }
+    }
 
     /* --- 画像スライダー用 CSS --- */
     .carousel-container {
@@ -222,39 +220,13 @@
       object-fit: cover;
     }
     
-    
-.slider-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.1); /* 背景の黒をより薄く（0.6 → 0.1） */
-      color: rgba(255, 255, 255, 0.4); /* 矢印の文字色自体も少し薄めの白に */
-      border: 1px solid rgba(255, 255, 255, 0.1); /* 枠線を薄く（0.3 → 0.1） */
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      z-index: 10;
-      user-select: none;
-      transition: background-color 0.2s, color 0.2s; /* ホバー時にスムーズに変わるように追加 */
-    }
-
-    .slider-btn:hover {
-      background-color: rgba(0, 0, 0, 0.4); /* ホバー時は少し濃くして視認性を確保 */
-      color: rgba(255, 255, 255, 1);
-    }
-/* ---
     .slider-btn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background-color: rgba(0, 0, 0, 0.1);
+      color: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 50%;
       width: 40px;
       height: 40px;
@@ -265,12 +237,13 @@
       font-size: 18px;
       z-index: 10;
       user-select: none;
+      transition: background-color 0.2s, color 0.2s;
     }
 
     .slider-btn:hover {
-      background-color: rgba(0, 0, 0, 0.9);
+      background-color: rgba(0, 0, 0, 0.4);
+      color: rgba(255, 255, 255, 1);
     }
---- */
 
     .prev-btn {
       left: 10px;
@@ -280,7 +253,7 @@
       right: 10px;
     }
 
-    /* --- フッターエリア（中央2列配置＆トップページリンク用） --- */
+    /* --- フッターエリア --- */
     .footer-container {
       width: 100%;
       box-sizing: border-box;
@@ -300,11 +273,11 @@
       align-items: center;
       text-align: center;
       padding-bottom: 30px;
-      gap: 8px; /* 1段目と2段目の間隔 */
+      gap: 8px;
     }
 
     .footer-link {
-      color: #666666; /* 文字の色を少し薄めに調整 */
+      color: #666666;
       text-decoration: none;
       font-size: 14px;
       font-weight: bold;
@@ -321,55 +294,10 @@
   <!-- ナビゲーションメニュー -->
   <nav class="navbar">
     <ul class="nav-menu">
-
-      <li>
-        <!--
-        <a href="#">
-          <img src="https://via.placeholder.com/100x32/333/fff?text=Logo" alt="Logo" class="nav-logo-img">
-        </a>
-           -->
-      </li>
-
-  <!-- 
-      <li class="navbar-title">＊＊＊</li>
-  -->
-
+      <li></li>
       <li class="dropdown" id="dropdown">
         <button class="dropbtn" id="dropbtn">Menu ▼</button>
         <ul class="dropdown-content" id="dropdownContent">
- 
- 
-<!--          <li class="has-submenu">
-            <a href="#" id="mSubmenuBtn">Members</a>
-            <ul class="submenu" id="mSubmenu">
-              <li><a href="members/index.html">Members Top</a></li>
-              <li><a href="members/akio.html">AKIO</a></li>
-              <li><a href="members/atsushi.html">ATSUSHI</a></li>
-              <li><a href="members/kanbe.html">KANBE</a></li>
-              <li><a href="members/kazu.html">KAZU</a></li>
-              <li><a href="members/kenji.html">KENJI </a></li>
-              <li><a href="members/kuri.html">KURI </a></li>
-              
-              <li><a href="members/masa.html">MASA </a></li>
-              <li><a href="members/mase.html">MASE </a></li>
-              <li><a href="members/nobuo.html">NOBUO </a></li>
-              <li><a href="members/ozawa.html">OZAWA </a></li>
-              <li><a href="members/rabi/index.html">RABI </a></li>
-              <li><a href="members/sakai.html">SAKAI </a></li>
-              
-              <li><a href="members/shige.html">SHIGE </a></li>
-              <li><label><a href="members/shin.html">SHIN </a></label></li>
-              <li><a href="members/sugizaki.html">SUGIZAKI </a></li>
-              <li><a href="members/take.html">TAKE </a></li>
-              <li><a href="members/toyota.html">TOYOTA </a></li>
-              <li><a href="members/tsunashima.html">TSUNASHIMA </a></li>
-              
-              <li><a href="members/tsuyo.html">TSUYOSHI </a></li>
-              <li><a href="members/yasu.html">YASU </a></li>
-              <li><a href="members/yukio.html">YUKIO </a></li>
-            </ul>
-          </li>
-  -->
           <li><a href="members/index.html">Members</a></li>  
           <li><a href="amigo/index.html">Amigo</a></li>
           <li><a href="special/index.html">Race</a></li>
@@ -391,7 +319,7 @@
     <img src="image1/logo.jpg" alt="KP-ファクトリー" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   </div>
   
-<!-- 流れる文字（マーキー風）エリア -->
+  <!-- 流れる文字（マーキー風）エリア -->
   <div class="marquee-container">
     <div class="marquee-text">
       <span id="kan16"></span> Website リニューアル工事中
@@ -410,7 +338,6 @@
         <div class="slide"><img src="top image/20260822_63.jpg" alt="画像5"></div>
         <div class="slide"><img src="top image/20260822_66.jpg" alt="画像6"></div>
         <div class="slide"><img src="top image/20260822_151.jpg" alt="画像7"></div>
-
       </div>
       <button class="slider-btn next-btn" id="nextBtn">❯</button>
     </div>
@@ -435,20 +362,24 @@
     dropbtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const isActive = dropdownContent.classList.toggle('active');
-      if (!isActive) {
+      if (!isActive && mSubmenu) {
         mSubmenu.classList.remove('active');
       }
     });
 
-    mSubmenuBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      mSubmenu.classList.toggle('active');
-    });
+    if (mSubmenuBtn && mSubmenu) {
+      mSubmenuBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        mSubmenu.classList.toggle('active');
+      });
+    }
 
     document.addEventListener('click', () => {
       dropdownContent.classList.remove('active');
-      mSubmenu.classList.remove('active');
+      if (mSubmenu) {
+        mSubmenu.classList.remove('active');
+      }
     });
 
     /* --- 自動送りスライダー処理 --- */
@@ -459,7 +390,8 @@
     const INTERVAL_TIME = 3000;
     let autoSlideTimer = null;
 
-    function nextSlide() {
+    // 次へ送る処理
+    function moveToNext() {
       const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
       if (slider.scrollLeft >= maxScrollLeft - 1) {
         slider.scrollTo({ left: 0, behavior: 'smooth' });
@@ -468,7 +400,8 @@
       }
     }
 
-    function prevSlide() {
+    // 前へ戻る処理
+    function moveToPrev() {
       if (slider.scrollLeft <= 0) {
         const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
         slider.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
@@ -479,7 +412,7 @@
 
     function startAutoSlide() {
       stopAutoSlide();
-      autoSlideTimer = setInterval(nextSlide, INTERVAL_TIME);
+      autoSlideTimer = setInterval(moveToNext, INTERVAL_TIME);
     }
 
     function stopAutoSlide() {
@@ -488,23 +421,27 @@
       }
     }
 
+    // ボタンクリック時のイベント
     prevBtn.addEventListener('click', () => {
-      prevSlide();
+      moveToPrev();
       startAutoSlide();
     });
 
     nextBtn.addEventListener('click', () => {
-      nextSlide();
+      moveToNext();
       startAutoSlide();
     });
 
+    // マウスホバーやタッチ時の自動送り一時停止
     slider.addEventListener('mouseenter', stopAutoSlide);
     slider.addEventListener('mouseleave', startAutoSlide);
     slider.addEventListener('touchstart', stopAutoSlide, { passive: true });
     slider.addEventListener('touchend', startAutoSlide, { passive: true });
 
+    // スライダー開始
     startAutoSlide();
   </script>
 
 </body>
 </html>
+
