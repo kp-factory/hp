@@ -181,9 +181,16 @@ body {
 }
 
 .spec-val-col {
+  word-break: break-all; /* または overflow-wrap: break-word; */
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+/*
   width: 75% !important;
   word-break: break-all;
 }
+*/
+
 
 /*
  @media screen and (max-width: 600px) {
@@ -193,23 +200,26 @@ body {
   }
 }
  */
-
+ 
 @media screen and (max-width: 600px) {
-  /* テーブルのセル幅を均等にし、パディングを狭くして収まりやすくする */
+  /* テーブルのセル幅を画面に合わせる */
   .spec-table {
     width: 100% !important;
     table-layout: fixed;
   }
   
   .spec-table th, .spec-table td {
-    font-size: 11px; /* スマホで文字が収まるように少し小さくする */
-    padding: 6px 2px; /* 左右の余白を詰めることで「TSUNASHIMA」などの長い名前も収まるようにする */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 12px; /* スマホで見やすいサイズに調整 */
+    padding: 8px 6px;
+    
+    /* 省略表示を解除し、自動折り返しを有効にする */
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: anywhere;
   }
 }
-
 
 
 
