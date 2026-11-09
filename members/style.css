@@ -294,4 +294,30 @@ body {
   color: #ffffff;
   text-decoration: underline;
 }
-```[cite: 1, 2]
+
+
+/* YouTubeリンクを並べるコンテナ */
+.youtube-grid {
+  display: flex;
+  gap: 16px; /* サムネイル同士の隙間 */
+  margin-bottom: 24px;
+  flex-wrap: wrap; /* スマホなどで画面が狭くなったら自動で折り返す */
+}
+
+/* 各YouTubeサムネイルのスタイル */
+.youtube-item {
+  flex: 1;
+  min-width: 280px; /* スマホで縮みすぎないように最小幅を指定 */
+}
+
+.youtube-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+
+
+
+
