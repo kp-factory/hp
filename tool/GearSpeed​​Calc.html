@@ -153,6 +153,7 @@
             background-color: #000000;
             color: #ffffff;
             font-weight: bold;
+            text-align: center;
         }
 
         .section-title {
@@ -161,10 +162,19 @@
             margin: 15px 0 6px 0;
             padding-bottom: 4px;
             border-bottom: 1px solid #333333;
-            color: #cccccc;
+            color: #ffaa00; /* 計算結果と同じオレンジ色に変更 */
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* 注釈テキストを少し小さくするクラス */
+        .note-small {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: #cccccc;
         }
 
         .sample-controls {
@@ -420,11 +430,11 @@
   <nav class="navbar">
     <ul class="nav-menu">
       <li class="nav-left-item">
-        <a href="../index.html">
+        <a [Descriptive Text](file:///D:/%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8/homepage/kpfactory/index.html) target="_blank">
           <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
         </a>
       </li>
-      <li><a href="tool_index.html" class="navbar-title">TOOL</a></li>
+      <li><a [Descriptive Text](file:///D:/%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8/homepage/kpfactory/tool/GearSpeed%E2%80%8B%E2%80%8BCalc.html) class="navbar-title">TOOL</a></li>
       <li class="nav-right-space"></li>
     </ul>
   </nav>
@@ -439,19 +449,19 @@
             <div class="grid-container">
                 <div class="input-group">
                     <label for="wheelInch">ホイール直径 (インチ)</label>
-                    <input type="number" id="wheelInch" step="0.1" value="13" required oninput="saveInputs()">
+                    <input type="number" id="wheelInch" step="0.1" value="13" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="tireWidth">タイヤ幅 (mm)</label>
-                    <input type="number" id="tireWidth" step="1" value="175" required oninput="saveInputs()">
+                    <input type="number" id="tireWidth" step="1" value="175" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="tireFlat">扁平率 (%)</label>
-                    <input type="number" id="tireFlat" step="1" value="60" required oninput="saveInputs()">
+                    <input type="number" id="tireFlat" step="1" value="60" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="maxRpmInput">最高回転数 (rpm)</label>
-                    <input type="number" id="maxRpmInput" step="500" min="1000" max="15000" value="9000" required oninput="saveInputs()">
+                    <input type="number" id="maxRpmInput" step="500" min="1000" max="15000" value="9000" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
             </div>
             <div id="tireOuterDia" class="tire-info">計算外径: -</div>
@@ -469,7 +479,7 @@
             <div class="grid-container">
                 <div class="input-group">
                     <label for="finalGear">ファイナルギヤレシオ</label>
-                    <input type="number" id="finalGear" step="0.001" value="3.583" required oninput="saveInputs()">
+                    <input type="number" id="finalGear" step="0.001" value="3.583" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
             </div>
 
@@ -486,27 +496,27 @@
             <div class="grid-container">
                 <div class="input-group">
                     <label for="gear1">1速</label>
-                    <input type="number" id="gear1" step="0.001" value="3.789" required oninput="saveInputs()">
+                    <input type="number" id="gear1" step="0.001" value="3.789" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="gear2">2速</label>
-                    <input type="number" id="gear2" step="0.001" value="2.220" required oninput="saveInputs()">
+                    <input type="number" id="gear2" step="0.001" value="2.220" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="gear3">3速</label>
-                    <input type="number" id="gear3" step="0.001" value="1.435" required oninput="saveInputs()">
+                    <input type="number" id="gear3" step="0.001" value="1.435" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="gear4">4速</label>
-                    <input type="number" id="gear4" step="0.001" value="1.000" required oninput="saveInputs()">
+                    <input type="number" id="gear4" step="0.001" value="1.000" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="gear5">5速</label>
-                    <input type="number" id="gear5" step="0.001" value="0.865" required oninput="saveInputs()">
+                    <input type="number" id="gear5" step="0.001" value="0.865" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
                 <div class="input-group">
                     <label for="gear6">6速</label>
-                    <input type="number" id="gear6" step="0.001" value="" required oninput="saveInputs()">
+                    <input type="number" id="gear6" step="0.001" value="" required oninput="saveInputs()" onfocus="this.select()">
                 </div>
             </div>
 
@@ -541,7 +551,10 @@
 
     <!-- 統合グラフ比較エリア -->
     <div class="card">
-        <div class="section-title">速度特性グラフ比較 (※グラフ上の1000rpmポイントをクリックで速度比較表を表示)</div>
+        <div class="section-title">
+            <span>速度特性グラフ比較</span>
+            <span class="note-small">(※グラフ上の1000rpmポイントをクリックで速度比較表を表示)</span>
+        </div>
         <div class="chart-box">
             <div class="chart-actions">
                 <span id="beforeInfo">基準値: 外径 -, ファイナル -</span>
@@ -563,8 +576,8 @@
   <footer class="footer-container">
     <hr class="footer-divider">
     <div class="footer-content-wrapper">
-      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
-      <a href="../index.html" class="footer-link">Since 1985</a>
+      <a [Descriptive Text](file:///D:/%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8/homepage/kpfactory/index.html) class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a [Descriptive Text](file:///D:/%E3%83%9B%E3%83%BC%E3%83%A0%E3%83%9A%E3%83%BC%E3%82%B8/homepage/kpfactory/index.html) class="footer-link">Since 1985</a>
     </div>
   </footer>
 
