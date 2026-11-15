@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エンジン圧縮比・各部寸法 逆算シミュレーター</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --text-color: #ffffff;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        /* --- ナビゲーションバー (共通) --- */
+        .navbar {
+            background-color: #000000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #333333;
+            box-sizing: border-box;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            height: 60px;
+        }
+
+        .nav-left-space,
+        .nav-right-item {
+            width: 90px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right-item {
+            justify-content: flex-end;
+        }
+
+        .navbar-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .navbar-title:hover {
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 480px) {
+            .nav-left-space {
+                width: 10px;
+            }
+            .navbar-title {
+                font-size: 16px;
+            }
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .nav-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        /* --- メインコンテンツコンテナ --- */
+        .container {
+            width: 98%;
+            max-width: 740px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .top-content {
+            padding-top: 85px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0 25px 0;
+            color: #ffffff;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px 12px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #333333;
+            color: #cccccc;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .input-group.target-field {
+            background: #2a2211;
+            border: 1px solid #ffaa00;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        input[type="radio"] {
+            margin-right: 6px;
+            accent-color: #ffaa00;
+            transform: scale(1.1);
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        button.main-btn {
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+        }
+
+        button.main-btn:hover {
+            background-color: #2563eb;
+        }
+
+        button.reset-btn {
+            background-color: #333333;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.reset-btn:hover {
+            background-color: #444444;
+        }
+
+        .result-box {
+            background: #111111;
+            border: 1px solid #ffaa00;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 1.6rem;
+            color: #ffaa00;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-top: 6px;
+            font-weight: normal;
+        }
+
+        /* --- フッターエリア (共通) --- */
+        .footer-container {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid #333333;
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 30px;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: #666666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .btn-container {
+                flex-direction: column;
+            }
+            button.main-btn, button.reset-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="../index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li><a href="tool_index.html" class="navbar-title">TOOL</a></li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+<div class="container top-content">
+    <h1>エンジン圧縮比・各部寸法 逆算シミュレーター</h1>
+    
+    <div class="card">
+        <div class="section-title">求めたい項目を選択</div>
+        <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="target" value="compression" checked onchange="toggleTarget()"> 圧縮比</label>
+            <label class="radio-label"><input type="radio" name="target" value="bore" onchange="toggleTarget()"> シリンダボア</label>
+            <label class="radio-label"><input type="radio" name="target" value="stroke" onchange="toggleTarget()"> ストローク</label>
+            <label class="radio-label"><input type="radio" name="target" value="v_head" onchange="toggleTarget()"> ヘッド燃焼室容積</label>
+            <label class="radio-label"><input type="radio" name="target" value="gasket_t" onchange="toggleTarget()"> ガスケット厚</label>
+            <label class="radio-label"><input type="radio" name="target" value="v_piston" onchange="toggleTarget()"> ピストントップ容積</label>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">数値入力・設定</div>
+        
+        <div class="input-group">
+            <label>仕様サンプル読込</label>
+            <select id="sampleSelect" onchange="loadSample()">
+                <option value="">-- エンジンサンプルを選択 --</option>
+                <option value="kp4k">トヨタ 4K型 (75.0 × 73.0)</option>
+                <option value="kp3k">トヨタ 3K型 (75.0 × 66.0)</option>
+            </select>
+        </div>
+
+        <div class="input-group" id="row-compression">
+            <label for="val-compression">目標圧縮比</label>
+            <input type="number" id="val-compression" value="10.0" step="0.1">
+        </div>
+        <div class="input-group" id="row-bore">
+            <label for="val-bore">シリンダボア (mm)</label>
+            <input type="number" id="val-bore" value="75.0" step="0.1">
+        </div>
+        <div class="input-group" id="row-stroke">
+            <label for="val-stroke">ストローク (mm)</label>
+            <input type="number" id="val-stroke" value="73.0" step="0.1">
+        </div>
+        <div class="input-group" id="row-v_head">
+            <label for="val-v_head">ヘッド燃焼室容積 (cc)</label>
+            <input type="number" id="val-v_head" value="28.0" step="0.1">
+        </div>
+        <div class="input-group" id="row-gasket_b">
+            <label for="val-gasket_b">ガスケットボア (mm)</label>
+            <input type="number" id="val-gasket_b" value="76.0" step="0.1">
+        </div>
+        <div class="input-group" id="row-gasket_t">
+            <label for="val-gasket_t">ガスケット厚 (mm)</label>
+            <input type="number" id="val-gasket_t" value="1.2" step="0.05">
+        </div>
+        <div class="input-group" id="row-v_piston">
+            <label for="val-v_piston">ピストントップ容積 (cc)</label>
+            <input type="number" id="val-v_piston" value="2.0" step="0.1">
+            <div class="note">※凹みはプラス、ドーム（飛び出し形状）はマイナス</div>
+        </div>
+        <div class="input-group" id="row-deck_c">
+            <label for="val-deck_c">デッキクリアランス (mm)</label>
+            <input type="number" id="val-deck_c" value="0.0" step="0.05">
+            <div class="note">※ピストン飛び出しはマイナス</div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="reset-btn" onclick="resetDefaults()">初期化</button>
+            <button type="button" class="main-btn" onclick="calculate()">計算実行</button>
+        </div>
+    </div>
+
+    <div class="result-box">
+        <div class="section-title" style="margin-top:0; border-bottom:none; text-align:center;">計算結果</div>
+        <div id="result-text">計算ボタンを押してください。</div>
+    </div>
+</div>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+<script>
+function toggleTarget() {
+    const target = document.querySelector('input[name="target"]:checked').value;
+    const rows = ['compression', 'bore', 'stroke', 'v_head', 'gasket_t', 'v_piston'];
+    
+    rows.forEach(r => {
+        const el = document.getElementById('row-' + r);
+        if (el) {
+            if (r === target) {
+                el.classList.add('target-field');
+                el.style.display = 'none'; // 求めたい項目は入力を隠す
+            } else {
+                el.classList.remove('target-field');
+                el.style.display = 'block';
+            }
+        }
+    });
+}
+
+function loadSample() {
+    const val = document.getElementById('sampleSelect').value;
+    if (val === 'kp4k') {
+        document.getElementById('val-bore').value = 75.0;
+        document.getElementById('val-stroke').value = 73.0;
+        document.getElementById('val-v_head').value = 28.0;
+        document.getElementById('val-gasket_b').value = 76.0;
+        document.getElementById('val-gasket_t').value = 1.2;
+        document.getElementById('val-v_piston').value = 2.0;
+        document.getElementById('val-deck_c').value = 0.0;
+    } else if (val === 'kp3k') {
+        document.getElementById('val-bore').value = 75.0;
+        document.getElementById('val-stroke').value = 66.0;
+        document.getElementById('val-v_head').value = 28.0;
+        document.getElementById('val-gasket_b').value = 76.0;
+        document.getElementById('val-gasket_t').value = 1.2;
+        document.getElementById('val-v_piston').value = 2.0;
+        document.getElementById('val-deck_c').value = 0.0;
+    }
+}
+
+function calculate() {
+    const target = document.querySelector('input[name="target"]:checked').value;
+    
+    const bore = parseFloat(document.getElementById('val-bore').value);
+    const stroke = parseFloat(document.getElementById('val-stroke').value);
+    const v_head = parseFloat(document.getElementById('val-v_head').value);
+    const gasket_b = parseFloat(document.getElementById('val-gasket_b').value);
+    const gasket_t = parseFloat(document.getElementById('val-gasket_t').value);
+    const v_piston = parseFloat(document.getElementById('val-v_piston').value);
+    const deck_c = parseFloat(document.getElementById('val-deck_c').value);
+    const comp = parseFloat(document.getElementById('val-compression').value);
+
+    const calcV1 = (b, s) => Math.PI * Math.pow(b / 2, 2) * s / 1000;
+    const calcV_gasket = (gb, gt) => Math.PI * Math.pow(gb / 2, 2) * gt / 1000;
+    const calcV_deck = (b, dc) => Math.PI * Math.pow(b / 2, 2) * dc / 1000;
+
+    let resHtml = '';
+
+    if (target === 'compression') {
+        const v1 = calcV1(bore, stroke);
+        const vg = calcV_gasket(gasket_b, gasket_t);
+        const vd = calcV_deck(bore, deck_c);
+        const v2 = v_head + vg + v_piston + vd;
+        const result = (v1 + v2) / v2;
+
+        resHtml = `目標圧縮比:<div class="result-value">${result.toFixed(2)}</div>` +
+                  `<div class="note">1気筒排気量(V1): ${v1.toFixed(2)} cc / 燃焼室容積合計(V2): ${v2.toFixed(2)} cc</div>`;
+    
+    } else if (target === 'bore') {
+        let low = 50, high = 120, b_ans = 75;
+        for (let i = 0; i < 100; i++) {
+            b_ans = (low + high) / 2;
+            let v1 = calcV1(b_ans, stroke);
+            let vg = calcV_gasket(gasket_b, gasket_t);
+            let vd = calcV_deck(b_ans, deck_c);
+            let v2 = v_head + vg + v_piston + vd;
+            let c = (v1 + v2) / v2;
+            if (c > comp) high = b_ans;
+            else low = b_ans;
+        }
+        resHtml = `逆算シリンダボア:<div class="result-value">${b_ans.toFixed(2)} mm</div>`;
+
+    } else if (target === 'stroke') {
+        const vg = calcV_gasket(gasket_b, gasket_t);
+        const vd = calcV_deck(bore, deck_c);
+        const v2 = v_head + vg + v_piston + vd;
+        const target_v1 = v2 * (comp - 1);
+        const s_ans = target_v1 / (Math.PI * Math.pow(bore / 2, 2) / 1000);
+
+        resHtml = `逆算ストローク:<div class="result-value">${s_ans.toFixed(2)} mm</div>` +
+                  `<div class="note">必要排気量(V1): ${target_v1.toFixed(2)} cc</div>`;
+
+    } else if (target === 'v_head') {
+        const v1 = calcV1(bore, stroke);
+        const vg = calcV_gasket(gasket_b, gasket_t);
+        const vd = calcV_deck(bore, deck_c);
+        const target_v2 = v1 / (comp - 1);
+        const v_head_ans = target_v2 - (vg + v_piston + vd);
+
+        resHtml = `逆算ヘッド燃焼室容積:<div class="result-value">${v_head_ans.toFixed(2)} cc</div>` +
+                  `<div class="note">目標燃焼室容積合計(V2): ${target_v2.toFixed(2)} cc</div>`;
+
+    } else if (target === 'gasket_t') {
+        const v1 = calcV1(bore, stroke);
+        const vd = calcV_deck(bore, deck_c);
+        const target_v2 = v1 / (comp - 1);
+        const target_vg = target_v2 - (v_head + v_piston + vd);
+        const gt_ans = target_vg / (Math.PI * Math.pow(gasket_b / 2, 2) / 1000);
+
+        resHtml = `逆算ガスケット厚:<div class="result-value">${gt_ans.toFixed(2)} mm</div>`;
+
+    } else if (target === 'v_piston') {
+        const v1 = calcV1(bore, stroke);
+        const vg = calcV_gasket(gasket_b, gasket_t);
+        const vd = calcV_deck(bore, deck_c);
+        const target_v2 = v1 / (comp - 1);
+        const vp_ans = target_v2 - (v_head + vg + vd);
+
+        resHtml = `逆算ピストントップ容積:<div class="result-value">${vp_ans.toFixed(2)} cc</div>` +
+                  `<div class="note">（プラス：凹み / マイナス：ドーム）</div>`;
+    }
+
+    document.getElementById('result-text').innerHTML = resHtml;
+}
+
+function resetDefaults() {
+    document.querySelector('input[name="target"][value="compression"]').checked = true;
+    toggleTarget();
+    loadSample();
+    document.getElementById('result-text').innerHTML = '初期化しました。';
+}
+
+// 初期化実行
+toggleTarget();
+</script>
+
+</body>
+</html>
