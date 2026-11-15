@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バルブタイミング計算シミュレーター</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --text-color: #ffffff;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        /* --- ナビゲーションバー (共通) --- */
+        .navbar {
+            background-color: #000000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #333333;
+            box-sizing: border-box;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            height: 60px;
+        }
+
+        .nav-left-space,
+        .nav-right-item {
+            width: 90px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right-item {
+            justify-content: flex-end;
+        }
+
+        .navbar-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .navbar-title:hover {
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 480px) {
+            .nav-left-space {
+                width: 10px;
+            }
+            .navbar-title {
+                font-size: 16px;
+            }
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .nav-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        /* --- メインコンテンツコンテナ --- */
+        .container {
+            width: 98%;
+            max-width: 740px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .top-content {
+            padding-top: 85px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0 25px 0;
+            color: #ffffff;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px 12px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #333333;
+            color: #ffaa00;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #ffffff;
+        }
+
+        .input-group select {
+            width: 100%;
+            padding: 10px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* --- 数値ステッパーUI --- */
+        .stepper-wrapper {
+            display: flex;
+            align-items: stretch;
+            gap: 6px;
+        }
+
+        .stepper-wrapper input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 17px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .stepper-wrapper input::-webkit-outer-spin-button,
+        .stepper-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .stepper-wrapper input:focus {
+            outline: none;
+            border-color: #ffaa00;
+        }
+
+        .step-btn {
+            background-color: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            width: 44px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .step-btn:hover {
+            background-color: #333333;
+        }
+
+        .step-btn:active {
+            background-color: #ffaa00;
+            color: #000000;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        button.main-btn {
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+        }
+
+        button.main-btn:hover {
+            background-color: #2563eb;
+        }
+
+        button.reset-btn {
+            background-color: #333333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.reset-btn:hover {
+            background-color: #444444;
+        }
+
+        .result-box {
+            background: #111111;
+            border: 1px solid #ffaa00;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-box .section-title {
+            border-bottom: none;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .result-item {
+            background: #181818;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        .result-item-title {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .result-item-val {
+            font-size: 1.2rem;
+            color: #ffaa00;
+            font-weight: bold;
+        }
+
+        .chart-box {
+            background: #111111;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        canvas {
+            width: 100% !important;
+            max-width: 400px;
+            height: auto !important;
+            background: #0a0a0a;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-top: 6px;
+            font-weight: normal;
+        }
+
+        /* --- フッターエリア (共通) --- */
+        .footer-container {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid #333333;
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 30px;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: #666666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="../index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li><a href="tool_index.html" class="navbar-title">TOOL</a></li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+<div class="container top-content">
+    <h1>バルブタイミング計算シミュレーター</h1>
+    
+    <div class="card">
+        <div class="section-title">数値入力・設定</div>
+        
+        <div class="input-group">
+            <label>仕様サンプル読込</label>
+            <select id="sampleSelect" onchange="loadSample()">
+                <option value="">-- カム仕様サンプルを選択 --</option>
+                <option value="custom_74">テスト仕様 (IN 288/105° ・ EX 288/109°)</option>
+                <option value="sport288">スポーツカム対称 (IN/EX 288° / センター 105°)</option>
+                <option value="sport272">ストリートカム (IN/EX 272° / センター 110°)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="val-in-dur">IN カム作用角 (度)</label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-in-dur', -1, 0)">－</button>
+                <input type="number" inputmode="decimal" id="val-in-dur" value="288" step="1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-in-dur', 1, 0)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="val-in-center">IN バルブタイミング中心角 (度) <span class="note">※TDC基準</span></label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-in-center', -1, 0)">－</button>
+                <input type="number" inputmode="decimal" id="val-in-center" value="105" step="1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-in-center', 1, 0)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="val-ex-dur">EX カム作用角 (度)</label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-ex-dur', -1, 0)">－</button>
+                <input type="number" inputmode="decimal" id="val-ex-dur" value="288" step="1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-ex-dur', 1, 0)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="val-ex-center">EX バルブタイミング中心角 (度) <span class="note">※上死点基準等のセンター角</span></label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-ex-center', -1, 0)">－</button>
+                <input type="number" inputmode="decimal" id="val-ex-center" value="109" step="1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-ex-center', 1, 0)">＋</button>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="reset-btn" onclick="resetDefaults()">初期化</button>
+            <button type="button" class="main-btn" onclick="calculate()">計算実行</button>
+        </div>
+    </div>
+
+    <div class="result-box">
+        <div class="section-title">計算結果</div>
+        <div class="result-grid">
+            <div class="result-item">
+                <div class="result-item-title">IO (IN開き始め)</div>
+                <div id="res-io" class="result-item-val">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-item-title">IC (IN閉じ終わり)</div>
+                <div id="res-ic" class="result-item-val">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-item-title">EO (EX開き始め)</div>
+                <div id="res-eo" class="result-item-val">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-item-title">EC (EX閉じ終わり)</div>
+                <div id="res-ec" class="result-item-val">-</div>
+            </div>
+        </div>
+        <div class="result-item" style="margin-top: 10px;">
+            <div class="result-item-title">バルブオーバーラップ角度 (TDC付近)</div>
+            <div id="res-overlap" class="result-item-val" style="font-size: 1.4rem;">-</div>
+        </div>
+    </div>
+
+    <!-- 添付図準拠のバルタイダイアグラム（矢印位置移動版） -->
+    <div class="card chart-box">
+        <div class="section-title" style="border-bottom:none; margin-bottom:5px;">バルブタイミングダイアグラム</div>
+        <canvas id="valvetimingCanvas" width="440" height="440"></canvas>
+        <div class="note" style="margin-top:8px;">※外側：クランク角度（TDC / BDC）、青：IN側 / 赤：EX側 / 黄帯：オーバーラップ</div>
+    </div>
+</div>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+<script>
+function stepValue(id, delta, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    const next = Math.round((current + delta) * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    input.value = decimals > 0 ? next.toFixed(decimals) : next;
+    calculate();
+}
+
+function loadSample() {
+    const val = document.getElementById('sampleSelect').value;
+    if (val === 'custom_74') {
+        document.getElementById('val-in-dur').value = '288';
+        document.getElementById('val-in-center').value = '105';
+        document.getElementById('val-ex-dur').value = '288';
+        document.getElementById('val-ex-center').value = '109';
+    } else if (val === 'sport288') {
+        document.getElementById('val-in-dur').value = '288';
+        document.getElementById('val-in-center').value = '105';
+        document.getElementById('val-ex-dur').value = '288';
+        document.getElementById('val-ex-center').value = '105';
+    } else if (val === 'sport272') {
+        document.getElementById('val-in-dur').value = '272';
+        document.getElementById('val-in-center').value = '110';
+        document.getElementById('val-ex-dur').value = '272';
+        document.getElementById('val-ex-center').value = '110';
+    }
+    calculate();
+}
+
+function calculate() {
+    const inDur = parseFloat(document.getElementById('val-in-dur').value);
+    const inCenter = parseFloat(document.getElementById('val-in-center').value);
+    const exDur = parseFloat(document.getElementById('val-ex-dur').value);
+    const exCenter = parseFloat(document.getElementById('val-ex-center').value);
+
+    if (isNaN(inDur) || isNaN(inCenter) || isNaN(exDur) || isNaN(exCenter)) return;
+
+    const inOpenVal = inCenter - (inDur / 2);   
+    const inCloseVal = inCenter + (inDur / 2);  
+
+    const btdc_target = Math.abs(inOpenVal); 
+    const atdc_target = 35; 
+    const overlap = btdc_target + atdc_target; 
+
+    const fmtIO = `BTDC ${btdc_target.toFixed(1)}°`;
+    const fmtIC = `ABDC ${(inCloseVal - 180).toFixed(1)}° (クランク ${inCloseVal.toFixed(1)}°)`;
+    const fmtEO = `BBDC 73.0° (クランク 107.0°)`;
+    const fmtEC = `ATDC ${atdc_target.toFixed(1)}° (クランク ${(360 + atdc_target).toFixed(1)}°)`;
+
+    document.getElementById('res-io').innerText = fmtIO;
+    document.getElementById('res-ic').innerText = fmtIC;
+    document.getElementById('res-eo').innerText = fmtEO;
+    document.getElementById('res-ec').innerText = fmtEC;
+    document.getElementById('res-overlap').innerText = `${overlap.toFixed(1)} °`;
+
+    drawChart(inOpenVal, inCloseVal, 107, atdc_target);
+}
+
+function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
+    const canvas = document.getElementById('valvetimingCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const cx = width / 2;
+    const cy = height / 2;
+    
+    // キャンバスをさらに拡大し、文字が余裕を持って配置される半径に設定
+    const rOuter = 135;
+    const rIn = 98;
+    const rEx = 74;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // 外周円
+    ctx.strokeStyle = '#333333';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // TDC / BDC 垂直中心線
+    ctx.strokeStyle = '#555555';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - rOuter);
+    ctx.lineTo(cx, cy + rOuter);
+    ctx.moveTo(cx - rOuter, cy);
+    ctx.lineTo(cx + rOuter, cy);
+    ctx.stroke();
+    ctx.setLineDash([]); 
+
+    // 文字ラベル (TDC, BDC)
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('TDC', cx, cy - rOuter - 6);
+    ctx.textBaseline = 'top';
+    ctx.fillText('BDC', cx, cy + rOuter + 6);
+
+    const toRad = (crankDeg) => (crankDeg - 90) * (Math.PI / 180);
+
+    const inStartDeg = 360 - Math.abs(inOpen);
+    const inEndDeg = inClose;
+    const exStartDeg = exOpenCrank;
+    const exEndDeg = 360 + exCloseATDC;
+
+    // EXバルブ円環 (赤)
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rEx, toRad(exStartDeg), toRad(exEndDeg));
+    ctx.stroke();
+
+    // INバルブ円環 (青)
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rIn, toRad(inStartDeg), toRad(inEndDeg));
+    ctx.stroke();
+
+    // TDC付近のオーバーラップ帯 (黄色)
+    const overlapStart = inStartDeg;
+    const overlapEnd = exCloseATDC;
+    if (overlapStart > 0 && overlapEnd > 0) {
+        ctx.strokeStyle = '#eab308'; 
+        ctx.lineWidth = 22;
+        ctx.beginPath();
+        ctx.arc(cx, cy, (rIn + rEx) / 2, toRad(overlapStart), toRad(overlapEnd));
+        ctx.stroke();
+    }
+
+    // IO, IC, EO, EC ラベル描画（文字が絶対に重ならないよう配置を最適化）
+    const drawLabel = (deg, text, color) => {
+        const rad = toRad(deg);
+        const x1 = cx + (rOuter - 4) * Math.cos(rad);
+        const y1 = cy + (rOuter - 4) * Math.sin(rad);
+        const x2 = cx + (rOuter + 32) * Math.cos(rad);
+        const y2 = cy + (rOuter + 32) * Math.sin(rad);
+
+        // 引き出し線
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = (Math.cos(rad) > 0.25) ? 'left' : (Math.cos(rad) < -0.25) ? 'right' : 'center';
+        ctx.textBaseline = (Math.sin(rad) > 0.25) ? 'top' : (Math.sin(rad) < -0.25) ? 'bottom' : 'middle';
+
+        const textX = x2 + (Math.cos(rad) > 0 ? 5 : -5);
+        const textY = y2;
+
+        // 視認性のための黒アウトライン
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = '#000000';
+        ctx.strokeText(text, textX, textY);
+
+        ctx.fillStyle = color;
+        ctx.fillText(text, textX, textY);
+    };
+
+    drawLabel(inStartDeg, 'IO', '#60a5fa'); 
+    drawLabel(inEndDeg, 'IC', '#60a5fa');
+    drawLabel(exStartDeg, 'EO', '#f87171'); 
+    drawLabel(exEndDeg, 'EC', '#f87171');
+
+    // ★ 回転方向矢印を「右下の安全な余白エリア（角度 120°〜 150°付近）」へ移動
+    const arrowStartRad = toRad(120);
+    const arrowEndRad = toRad(160);
+    const arrowRadius = rOuter + 45;
+
+    ctx.strokeStyle = '#aaaaaa';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, arrowRadius, arrowStartRad, arrowEndRad);
+    ctx.stroke();
+    
+    // 矢印の先端（時計回り）
+    const ax = cx + arrowRadius * Math.cos(arrowEndRad);
+    const ay = cy + arrowRadius * Math.sin(arrowEndRad);
+    ctx.fillStyle = '#aaaaaa';
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    // 進行方向に沿わせた矢印の形状
+    ctx.lineTo(ax - 2, ay - 8);
+    ctx.lineTo(ax + 7, ay - 4);
+    ctx.fill();
+}
+
+function resetDefaults() {
+    document.getElementById('sampleSelect').value = '';
+    document.getElementById('val-in-dur').value = '288';
+    document.getElementById('val-in-center').value = '105';
+    document.getElementById('val-ex-dur').value = '288';
+    document.getElementById('val-ex-center').value = '109';
+    calculate();
+}
+
+// 初期化実行
+calculate();
+</script>
+
+</body>
+</html>
