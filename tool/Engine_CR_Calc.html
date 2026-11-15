@@ -131,24 +131,24 @@
             margin: 15px 0 10px 0;
             padding-bottom: 4px;
             border-bottom: 1px solid #333333;
-            color: #cccccc;
+            color: #ffaa00; /* ← 計算結果と同じオレンジ色に変更 */
         }
 
         .input-group {
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
 
         .input-group label {
             display: block;
             font-size: 15px;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             color: #ffffff;
         }
 
-        .input-group input, .input-group select {
+        .input-group select {
             width: 100%;
-            padding: 6px 8px;
+            padding: 10px 8px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 15px;
@@ -156,14 +156,70 @@
             background-color: #000000;
             color: #ffffff;
             font-weight: bold;
-            text-align: right;
         }
 
-        .input-group.target-field {
-            background: #2a2211;
-            border: 1px solid #ffaa00;
-            padding: 8px;
+        /* --- 数値ステッパーUI --- */
+        .stepper-wrapper {
+            display: flex;
+            align-items: stretch;
+            gap: 6px;
+        }
+
+        .stepper-wrapper input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
+            font-size: 17px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .stepper-wrapper input::-webkit-outer-spin-button,
+        .stepper-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .stepper-wrapper input:focus {
+            outline: none;
+            border-color: #ffaa00;
+        }
+
+        .step-btn {
+            background-color: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            width: 44px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .step-btn:hover {
+            background-color: #333333;
+        }
+
+        .step-btn:active {
+            background-color: #ffaa00;
+            color: #000000;
+        }
+
+        .sign-btn {
+            width: 40px;
+            font-size: 15px;
+            color: #ffaa00;
         }
 
         .radio-group {
@@ -199,7 +255,7 @@
             background-color: #1d4ed8;
             color: white;
             border: none;
-            padding: 10px 24px;
+            padding: 12px 24px;
             font-size: 15px;
             font-weight: bold;
             border-radius: 4px;
@@ -216,8 +272,8 @@
             background-color: #333333;
             color: white;
             border: none;
-            padding: 10px 24px;
-            font-size: 13px;
+            padding: 12px 24px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
@@ -235,13 +291,24 @@
             padding: 15px;
             margin-top: 20px;
             text-align: center;
+            position: sticky;
+            bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 計算結果ボックス内のタイトルはボーダー非表示かつ中央にしたい場合の個別調整 */
+        .result-box .section-title {
+            border-bottom: none;
+            text-align: center;
+            margin-top: 0;
         }
 
         .result-value {
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             color: #ffaa00;
             font-weight: bold;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .note {
@@ -284,15 +351,6 @@
         .footer-link:hover {
             color: #ffffff;
             text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-            .btn-container {
-                flex-direction: column;
-            }
-            button.main-btn, button.reset-btn {
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -340,36 +398,77 @@
 
         <div class="input-group" id="row-compression">
             <label for="val-compression">目標圧縮比</label>
-            <input type="number" id="val-compression" value="10.0" step="0.1">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-compression', -0.1, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-compression" value="10.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-compression', 0.1, 1)">＋</button>
+            </div>
         </div>
+
         <div class="input-group" id="row-bore">
             <label for="val-bore">シリンダボア (mm)</label>
-            <input type="number" id="val-bore" value="75.0" step="0.1">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-bore', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-bore" value="75.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-bore', 0.5, 1)">＋</button>
+            </div>
         </div>
+
         <div class="input-group" id="row-stroke">
             <label for="val-stroke">ストローク (mm)</label>
-            <input type="number" id="val-stroke" value="73.0" step="0.1">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-stroke', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-stroke" value="73.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-stroke', 0.5, 1)">＋</button>
+            </div>
         </div>
+
         <div class="input-group" id="row-v_head">
             <label for="val-v_head">ヘッド燃焼室容積 (cc)</label>
-            <input type="number" id="val-v_head" value="28.0" step="0.1">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-v_head', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-v_head" value="28.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-v_head', 0.5, 1)">＋</button>
+            </div>
         </div>
+
         <div class="input-group" id="row-gasket_b">
             <label for="val-gasket_b">ガスケットボア (mm)</label>
-            <input type="number" id="val-gasket_b" value="76.0" step="0.1">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-gasket_b', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-gasket_b" value="76.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-gasket_b', 0.5, 1)">＋</button>
+            </div>
         </div>
+
         <div class="input-group" id="row-gasket_t">
             <label for="val-gasket_t">ガスケット厚 (mm)</label>
-            <input type="number" id="val-gasket_t" value="1.2" step="0.05">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-gasket_t', -0.1, 2)">－</button>
+                <input type="number" inputmode="decimal" id="val-gasket_t" value="1.2" step="0.05" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-gasket_t', 0.1, 2)">＋</button>
+            </div>
         </div>
+
         <div class="input-group" id="row-v_piston">
             <label for="val-v_piston">ピストントップ容積 (cc)</label>
-            <input type="number" id="val-v_piston" value="2.0" step="0.1">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn sign-btn" onclick="toggleSign('val-v_piston', 1)" title="プラス・マイナス反転">±</button>
+                <button type="button" class="step-btn" onclick="stepValue('val-v_piston', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-v_piston" value="2.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-v_piston', 0.5, 1)">＋</button>
+            </div>
             <div class="note">※凹みはプラス、ドーム（飛び出し形状）はマイナス</div>
         </div>
+
         <div class="input-group" id="row-deck_c">
             <label for="val-deck_c">デッキクリアランス (mm)</label>
-            <input type="number" id="val-deck_c" value="0.0" step="0.05">
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn sign-btn" onclick="toggleSign('val-deck_c', 2)" title="プラス・マイナス反転">±</button>
+                <button type="button" class="step-btn" onclick="stepValue('val-deck_c', -0.05, 2)">－</button>
+                <input type="number" inputmode="decimal" id="val-deck_c" value="0.0" step="0.05" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-deck_c', 0.05, 2)">＋</button>
+            </div>
             <div class="note">※ピストン飛び出しはマイナス</div>
         </div>
 
@@ -380,7 +479,7 @@
     </div>
 
     <div class="result-box">
-        <div class="section-title" style="margin-top:0; border-bottom:none; text-align:center;">計算結果</div>
+        <div class="section-title">計算結果</div>
         <div id="result-text">計算ボタンを押してください。</div>
     </div>
 </div>
@@ -395,6 +494,25 @@
   </footer>
 
 <script>
+// ステップ増減処理（浮動小数点誤差を防止）
+function stepValue(id, delta, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    const next = Math.round((current + delta) * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    input.value = next.toFixed(decimals);
+    calculate();
+}
+
+// プラス・マイナス符号反転
+function toggleSign(id, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    if (current !== 0) {
+        input.value = (-current).toFixed(decimals);
+        calculate();
+    }
+}
+
 function toggleTarget() {
     const target = document.querySelector('input[name="target"]:checked').value;
     const rows = ['compression', 'bore', 'stroke', 'v_head', 'gasket_t', 'v_piston'];
@@ -403,35 +521,35 @@ function toggleTarget() {
         const el = document.getElementById('row-' + r);
         if (el) {
             if (r === target) {
-                el.classList.add('target-field');
-                el.style.display = 'none'; // 求めたい項目は入力を隠す
+                el.style.display = 'none';
             } else {
-                el.classList.remove('target-field');
                 el.style.display = 'block';
             }
         }
     });
+    calculate();
 }
 
 function loadSample() {
     const val = document.getElementById('sampleSelect').value;
     if (val === 'kp4k') {
-        document.getElementById('val-bore').value = 75.0;
-        document.getElementById('val-stroke').value = 73.0;
-        document.getElementById('val-v_head').value = 28.0;
-        document.getElementById('val-gasket_b').value = 76.0;
-        document.getElementById('val-gasket_t').value = 1.2;
-        document.getElementById('val-v_piston').value = 2.0;
-        document.getElementById('val-deck_c').value = 0.0;
+        document.getElementById('val-bore').value = '75.0';
+        document.getElementById('val-stroke').value = '73.0';
+        document.getElementById('val-v_head').value = '28.0';
+        document.getElementById('val-gasket_b').value = '76.0';
+        document.getElementById('val-gasket_t').value = '1.20';
+        document.getElementById('val-v_piston').value = '2.0';
+        document.getElementById('val-deck_c').value = '0.00';
     } else if (val === 'kp3k') {
-        document.getElementById('val-bore').value = 75.0;
-        document.getElementById('val-stroke').value = 66.0;
-        document.getElementById('val-v_head').value = 28.0;
-        document.getElementById('val-gasket_b').value = 76.0;
-        document.getElementById('val-gasket_t').value = 1.2;
-        document.getElementById('val-v_piston').value = 2.0;
-        document.getElementById('val-deck_c').value = 0.0;
+        document.getElementById('val-bore').value = '75.0';
+        document.getElementById('val-stroke').value = '66.0';
+        document.getElementById('val-v_head').value = '28.0';
+        document.getElementById('val-gasket_b').value = '76.0';
+        document.getElementById('val-gasket_t').value = '1.20';
+        document.getElementById('val-v_piston').value = '2.0';
+        document.getElementById('val-deck_c').value = '0.00';
     }
+    calculate();
 }
 
 function calculate() {
@@ -445,6 +563,12 @@ function calculate() {
     const v_piston = parseFloat(document.getElementById('val-v_piston').value);
     const deck_c = parseFloat(document.getElementById('val-deck_c').value);
     const comp = parseFloat(document.getElementById('val-compression').value);
+
+    // 入力途中（空欄など）のエラー防止
+    if ([bore, stroke, v_head, gasket_b, gasket_t, v_piston, deck_c, comp].some(v => isNaN(v))) {
+        document.getElementById('result-text').innerHTML = '<span class="note">数値を入力してください...</span>';
+        return;
+    }
 
     const calcV1 = (b, s) => Math.PI * Math.pow(b / 2, 2) * s / 1000;
     const calcV_gasket = (gb, gt) => Math.PI * Math.pow(gb / 2, 2) * gt / 1000;
@@ -521,9 +645,16 @@ function calculate() {
 
 function resetDefaults() {
     document.querySelector('input[name="target"][value="compression"]').checked = true;
+    document.getElementById('sampleSelect').value = '';
+    document.getElementById('val-compression').value = '10.0';
+    document.getElementById('val-bore').value = '75.0';
+    document.getElementById('val-stroke').value = '73.0';
+    document.getElementById('val-v_head').value = '28.0';
+    document.getElementById('val-gasket_b').value = '76.0';
+    document.getElementById('val-gasket_t').value = '1.20';
+    document.getElementById('val-v_piston').value = '2.0';
+    document.getElementById('val-deck_c').value = '0.00';
     toggleTarget();
-    loadSample();
-    document.getElementById('result-text').innerHTML = '初期化しました。';
 }
 
 // 初期化実行
