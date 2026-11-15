@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>有効圧縮比（動的圧縮比）計算シミュレーター</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --text-color: #ffffff;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        /* --- ナビゲーションバー (共通) --- */
+        .navbar {
+            background-color: #000000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #333333;
+            box-sizing: border-box;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            height: 60px;
+        }
+
+        .nav-left-space,
+        .nav-right-item {
+            width: 90px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right-item {
+            justify-content: flex-end;
+        }
+
+        .navbar-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .navbar-title:hover {
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 480px) {
+            .nav-left-space {
+                width: 10px;
+            }
+            .navbar-title {
+                font-size: 16px;
+            }
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .nav-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        /* --- メインコンテンツコンテナ --- */
+        .container {
+            width: 98%;
+            max-width: 740px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .top-content {
+            padding-top: 85px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0 25px 0;
+            color: #ffffff;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px 12px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #333333;
+            color: #ffaa00;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #ffffff;
+        }
+
+        .input-sub-desc {
+            font-size: 12px;
+            color: #aaaaaa;
+            font-weight: normal;
+            margin-top: -4px;
+            margin-bottom: 6px;
+        }
+
+        .input-group select {
+            width: 100%;
+            padding: 10px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* --- 数値ステッパーUI --- */
+        .stepper-wrapper {
+            display: flex;
+            align-items: stretch;
+            gap: 6px;
+        }
+
+        .stepper-wrapper input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 17px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .stepper-wrapper input::-webkit-outer-spin-button,
+        .stepper-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .stepper-wrapper input:focus {
+            outline: none;
+            border-color: #ffaa00;
+        }
+
+        .step-btn {
+            background-color: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            width: 44px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .step-btn:hover {
+            background-color: #333333;
+        }
+
+        .step-btn:active {
+            background-color: #ffaa00;
+            color: #000000;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        input[type="radio"] {
+            margin-right: 6px;
+            accent-color: #ffaa00;
+            transform: scale(1.1);
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        button.main-btn {
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+        }
+
+        button.main-btn:hover {
+            background-color: #2563eb;
+        }
+
+        button.reset-btn {
+            background-color: #333333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.reset-btn:hover {
+            background-color: #444444;
+        }
+
+        .result-box {
+            background: #111111;
+            border: 1px solid #ffaa00;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            position: sticky;
+            bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        .result-box .section-title {
+            border-bottom: none;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            color: #ffaa00;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-top: 6px;
+            font-weight: normal;
+            line-height: 1.4;
+        }
+
+        .note span {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* --- フッターエリア (共通) --- */
+        .footer-container {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid #333333;
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 30px;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: #666666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="../index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li><a href="tool_index.html" class="navbar-title">TOOL</a></li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+<div class="container top-content">
+    <h1>有効圧縮比（動的圧縮比）計算シミュレーター</h1>
+    
+    <div class="card">
+        <div class="section-title">求めたい項目を選択</div>
+        <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="target" value="dcr" checked onchange="toggleTarget()"> 有効圧縮比 (DCR)</label>
+            <label class="radio-label"><input type="radio" name="target" value="scr" onchange="toggleTarget()"> 必要な幾何学的圧縮比 (SCR)</label>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">数値入力・設定</div>
+        
+        <div class="input-group">
+            <label>仕様サンプル読込</label>
+            <select id="sampleSelect" onchange="loadSample()">
+                <option value="">-- エンジン・カムサンプルを選択 --</option>
+                <option value="kp4k_stock">トヨタ 4K ノーマル (S:73.0 / L:118.0 / SCR:9.0 / ABDC:40°)</option>
+                <option value="kp4k_cam">トヨタ 4K チューン仕様 (S:73.0 / L:118.0 / SCR:11.0 / ABDC:65°)</option>
+                <option value="5k_cam">トヨタ 5K ボアアップ+ハイカム (S:73.0 / L:118.0 / SCR:11.5 / ABDC:70°)</option>
+                <option value="4ag_cam">トヨタ 4A-G ハイカム (S:77.0 / L:122.0 / SCR:11.2 / ABDC:68°)</option>
+            </select>
+        </div>
+
+        <div class="input-group" id="row-scr">
+            <label for="val-scr">幾何学的圧縮比 (SCR)</label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-scr', -0.1, 2)">－</button>
+                <input type="number" inputmode="decimal" id="val-scr" value="11.00" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-scr', 0.1, 2)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group" id="row-dcr">
+            <label for="val-dcr">目標 有効圧縮比 (DCR)</label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-dcr', -0.1, 2)">－</button>
+                <input type="number" inputmode="decimal" id="val-dcr" value="8.00" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-dcr', 0.1, 2)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group" id="row-abdc">
+            <label for="val-abdc">吸気バルブ閉時期 ABDC (度)</label>
+            <div class="input-sub-desc">※下死点後(ABDC)にバルブが完全に閉じる(0mmリフト)角度</div>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-abdc', -1, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-abdc" value="65.0" step="1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-abdc', 1, 1)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group" id="row-stroke">
+            <label for="val-stroke">クランクストローク長 (mm)</label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-stroke', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-stroke" value="73.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-stroke', 0.5, 1)">＋</button>
+            </div>
+        </div>
+
+        <div class="input-group" id="row-rod">
+            <label for="val-rod">コンロッド中心間長 (mm)</label>
+            <div class="stepper-wrapper">
+                <button type="button" class="step-btn" onclick="stepValue('val-rod', -0.5, 1)">－</button>
+                <input type="number" inputmode="decimal" id="val-rod" value="118.0" step="0.1" oninput="calculate()" onfocus="this.select()">
+                <button type="button" class="step-btn" onclick="stepValue('val-rod', 0.5, 1)">＋</button>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="reset-btn" onclick="resetDefaults()">初期化</button>
+            <button type="button" class="main-btn" onclick="calculate()">計算実行</button>
+        </div>
+    </div>
+
+    <div class="result-box">
+        <div class="section-title">計算結果</div>
+        <div id="result-text">計算ボタンを押してください。</div>
+    </div>
+</div>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+<script>
+// ステップ増減処理
+function stepValue(id, delta, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    const next = Math.round((current + delta) * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    input.value = decimals > 0 ? next.toFixed(decimals) : next;
+    calculate();
+}
+
+function toggleTarget() {
+    const target = document.querySelector('input[name="target"]:checked').value;
+    const rowScr = document.getElementById('row-scr');
+    const rowDcr = document.getElementById('row-dcr');
+    
+    if (target === 'dcr') {
+        rowScr.style.display = 'block';
+        rowDcr.style.display = 'none';
+    } else {
+        rowScr.style.display = 'none';
+        rowDcr.style.display = 'block';
+    }
+    calculate();
+}
+
+function loadSample() {
+    const val = document.getElementById('sampleSelect').value;
+    if (val === 'kp4k_stock') {
+        document.getElementById('val-stroke').value = '73.0';
+        document.getElementById('val-rod').value = '118.0';
+        document.getElementById('val-scr').value = '9.00';
+        document.getElementById('val-abdc').value = '40.0';
+    } else if (val === 'kp4k_cam') {
+        document.getElementById('val-stroke').value = '73.0';
+        document.getElementById('val-rod').value = '118.0';
+        document.getElementById('val-scr').value = '11.00';
+        document.getElementById('val-abdc').value = '65.0';
+    } else if (val === '5k_cam') {
+        document.getElementById('val-stroke').value = '73.0';
+        document.getElementById('val-rod').value = '118.0';
+        document.getElementById('val-scr').value = '11.50';
+        document.getElementById('val-abdc').value = '70.0';
+    } else if (val === '4ag_cam') {
+        document.getElementById('val-stroke').value = '77.0';
+        document.getElementById('val-rod').value = '122.0';
+        document.getElementById('val-scr').value = '11.20';
+        document.getElementById('val-abdc').value = '68.0';
+    }
+    calculate();
+}
+
+function calculate() {
+    const target = document.querySelector('input[name="target"]:checked').value;
+    
+    const scr = parseFloat(document.getElementById('val-scr').value);
+    const dcr_target = parseFloat(document.getElementById('val-dcr').value);
+    const abdc_deg = parseFloat(document.getElementById('val-abdc').value);
+    const stroke = parseFloat(document.getElementById('val-stroke').value);
+    const rod = parseFloat(document.getElementById('val-rod').value);
+
+    if (isNaN(abdc_deg) || isNaN(stroke) || isNaN(rod) || stroke <= 0) {
+        return;
+    }
+
+    const r = stroke / 2;
+    if (rod <= r) {
+        document.getElementById('result-text').innerHTML = `<div class="note" style="color:#ff5555;">コンロッド長はクランク半径 (${r}mm) より大きく入力してください。</div>`;
+        return;
+    }
+
+    // 角度ラジアン変換 (下死点後角)
+    const theta = abdc_deg * (Math.PI / 180);
+    
+    // 下死点からのピストン上昇量 h (厳密連関式)
+    // h = (R + L) - (R * cos(theta) + sqrt(L^2 - (R * sin(theta))^2))
+    const sin_t = Math.sin(theta);
+    const cos_t = Math.cos(theta);
+    const term_sqrt = Math.sqrt(Math.pow(rod, 2) - Math.pow(r * sin_t, 2));
+    const h = (r + rod) - (r * cos_t + term_sqrt);
+    
+    // 有効ストローク長
+    const s_eff = stroke - h;
+    const stroke_ratio = s_eff / stroke;
+
+    let resHtml = '';
+
+    if (target === 'dcr') {
+        if (isNaN(scr)) return;
+        const dcr = 1 + (scr - 1) * stroke_ratio;
+        const dcr_approx = 1 + ((scr - 1) / 2) * (1 + cos_t);
+
+        resHtml = `有効圧縮比 (DCR):<div class="result-value">${dcr.toFixed(2)}</div>` +
+                  `<div class="note">有効ストローク: <span>${s_eff.toFixed(2)} mm</span> (下死点上昇量: ${h.toFixed(2)} mm)<br>` +
+                  `連関比省略の簡易近似値: ${dcr_approx.toFixed(2)}</div>`;
+    } else if (target === 'scr') {
+        if (isNaN(dcr_target) || stroke_ratio <= 0) return;
+        // DCR = 1 + (SCR - 1) * (S_eff / S)  =>  SCR = 1 + (DCR - 1) / (S_eff / S)
+        const scr_req = 1 + (dcr_target - 1) / stroke_ratio;
+
+        resHtml = `必要な幾何学的圧縮比 (SCR):<div class="result-value">${scr_req.toFixed(2)}</div>` +
+                  `<div class="note">有効ストローク: <span>${s_eff.toFixed(2)} mm</span> (下死点上昇量: ${h.toFixed(2)} mm)<br>` +
+                  `目標DCR ${dcr_target.toFixed(2)} 達成のための基準圧縮比</div>`;
+    }
+
+    document.getElementById('result-text').innerHTML = resHtml;
+}
+
+function resetDefaults() {
+    document.querySelector('input[name="target"][value="dcr"]').checked = true;
+    document.getElementById('sampleSelect').value = '';
+    document.getElementById('val-scr').value = '11.00';
+    document.getElementById('val-dcr').value = '8.00';
+    document.getElementById('val-abdc').value = '65.0';
+    document.getElementById('val-stroke').value = '73.0';
+    document.getElementById('val-rod').value = '118.0';
+    toggleTarget();
+}
+
+// 初期化実行
+toggleTarget();
+</script>
+
+</body>
+</html>
