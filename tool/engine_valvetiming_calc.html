@@ -158,6 +158,28 @@
             font-weight: bold;
         }
 
+        /* --- ラジオボタン選択UI --- */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        input[type="radio"] {
+            margin-right: 6px;
+            accent-color: #ffaa00;
+            transform: scale(1.1);
+        }
+
         /* --- 数値ステッパーUI --- */
         .stepper-wrapper {
             display: flex;
@@ -214,6 +236,12 @@
         .step-btn:active {
             background-color: #ffaa00;
             color: #000000;
+        }
+
+        .sign-btn {
+            width: 40px;
+            font-size: 15px;
+            color: #ffaa00;
         }
 
         .btn-container {
@@ -280,6 +308,12 @@
             text-align: left;
         }
 
+        @media screen and (max-width: 480px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .result-item {
             background: #181818;
             border: 1px solid #333;
@@ -293,9 +327,10 @@
         }
 
         .result-item-val {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: #ffaa00;
             font-weight: bold;
+            margin-top: 2px;
         }
 
         .chart-box {
@@ -378,6 +413,21 @@
 <div class="container top-content">
     <h1>バルブタイミング計算シミュレーター</h1>
     
+    <!-- 計算モード選択カード (engine_cr_calc準拠) -->
+    <div class="card">
+        <div class="section-title">求めたい項目を選択</div>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="target" value="timing" checked onchange="toggleTarget()"> 
+                開閉タイミング (IO・IC・EO・EC)
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="target" value="cam_spec" onchange="toggleTarget()"> 
+                作用角・中心角 (逆算)
+            </label>
+        </div>
+    </div>
+
     <div class="card">
         <div class="section-title">数値入力・設定</div>
         
@@ -391,39 +441,89 @@
             </select>
         </div>
 
-        <div class="input-group">
-            <label for="val-in-dur">IN カム作用角 (度)</label>
-            <div class="stepper-wrapper">
-                <button type="button" class="step-btn" onclick="stepValue('val-in-dur', -1, 0)">－</button>
-                <input type="number" inputmode="decimal" id="val-in-dur" value="288" step="1" oninput="calculate()" onfocus="this.select()">
-                <button type="button" class="step-btn" onclick="stepValue('val-in-dur', 1, 0)">＋</button>
+        <!-- 順算用入力欄（作用角・中心角） -->
+        <div id="inputs-forward">
+            <div class="input-group">
+                <label for="val-in-dur">IN カム作用角 (度)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('val-in-dur', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="val-in-dur" value="288" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-in-dur', 1, 0)">＋</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="val-in-center">IN バルブタイミング中心角 (度) <span class="note">※TDC基準</span></label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('val-in-center', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="val-in-center" value="105" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-in-center', 1, 0)">＋</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="val-ex-dur">EX カム作用角 (度)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('val-ex-dur', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="val-ex-dur" value="288" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-ex-dur', 1, 0)">＋</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="val-ex-center">EX バルブタイミング中心角 (度) <span class="note">※上死点基準のセンター角</span></label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('val-ex-center', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="val-ex-center" value="109" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-ex-center', 1, 0)">＋</button>
+                </div>
             </div>
         </div>
 
-        <div class="input-group">
-            <label for="val-in-center">IN バルブタイミング中心角 (度) <span class="note">※TDC基準</span></label>
-            <div class="stepper-wrapper">
-                <button type="button" class="step-btn" onclick="stepValue('val-in-center', -1, 0)">－</button>
-                <input type="number" inputmode="decimal" id="val-in-center" value="105" step="1" oninput="calculate()" onfocus="this.select()">
-                <button type="button" class="step-btn" onclick="stepValue('val-in-center', 1, 0)">＋</button>
+        <!-- 逆算用入力欄（開き始め・閉じ終わり） -->
+        <div id="inputs-reverse" style="display: none;">
+            <div class="input-group">
+                <label for="val-io">IO : IN開き始め BTDC (度)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('val-io', 1)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn" onclick="stepValue('val-io', -1, 1)">－</button>
+                    <input type="number" inputmode="decimal" id="val-io" value="39.0" step="0.5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-io', 1, 1)">＋</button>
+                </div>
+                <div class="note">※TDC前はプラス、TDC後(ATDC)に開く場合はマイナス</div>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label for="val-ex-dur">EX カム作用角 (度)</label>
-            <div class="stepper-wrapper">
-                <button type="button" class="step-btn" onclick="stepValue('val-ex-dur', -1, 0)">－</button>
-                <input type="number" inputmode="decimal" id="val-ex-dur" value="288" step="1" oninput="calculate()" onfocus="this.select()">
-                <button type="button" class="step-btn" onclick="stepValue('val-ex-dur', 1, 0)">＋</button>
+            <div class="input-group">
+                <label for="val-ic">IC : IN閉じ終わり ABDC (度)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('val-ic', 1)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn" onclick="stepValue('val-ic', -1, 1)">－</button>
+                    <input type="number" inputmode="decimal" id="val-ic" value="69.0" step="0.5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-ic', 1, 1)">＋</button>
+                </div>
+                <div class="note">※BDC後はプラス、BDC前(BBDC)に閉じる場合はマイナス</div>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label for="val-ex-center">EX バルブタイミング中心角 (度) <span class="note">※上死点基準等のセンター角</span></label>
-            <div class="stepper-wrapper">
-                <button type="button" class="step-btn" onclick="stepValue('val-ex-center', -1, 0)">－</button>
-                <input type="number" inputmode="decimal" id="val-ex-center" value="109" step="1" oninput="calculate()" onfocus="this.select()">
-                <button type="button" class="step-btn" onclick="stepValue('val-ex-center', 1, 0)">＋</button>
+            <div class="input-group">
+                <label for="val-eo">EO : EX開き始め BBDC (度)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('val-eo', 1)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn" onclick="stepValue('val-eo', -1, 1)">－</button>
+                    <input type="number" inputmode="decimal" id="val-eo" value="73.0" step="0.5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-eo', 1, 1)">＋</button>
+                </div>
+                <div class="note">※BDC前はプラス、BDC後(ABDC)に開く場合はマイナス</div>
+            </div>
+
+            <div class="input-group">
+                <label for="val-ec">EC : EX閉じ終わり ATDC (度)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('val-ec', 1)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn" onclick="stepValue('val-ec', -1, 1)">－</button>
+                    <input type="number" inputmode="decimal" id="val-ec" value="35.0" step="0.5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('val-ec', 1, 1)">＋</button>
+                </div>
+                <div class="note">※TDC後はプラス、TDC前(BTDC)に閉じる場合はマイナス</div>
             </div>
         </div>
 
@@ -437,20 +537,20 @@
         <div class="section-title">計算結果</div>
         <div class="result-grid">
             <div class="result-item">
-                <div class="result-item-title">IO (IN開き始め)</div>
-                <div id="res-io" class="result-item-val">-</div>
+                <div id="res-title-1" class="result-item-title">IO (IN開き始め)</div>
+                <div id="res-val-1" class="result-item-val">-</div>
             </div>
             <div class="result-item">
-                <div class="result-item-title">IC (IN閉じ終わり)</div>
-                <div id="res-ic" class="result-item-val">-</div>
+                <div id="res-title-2" class="result-item-title">IC (IN閉じ終わり)</div>
+                <div id="res-val-2" class="result-item-val">-</div>
             </div>
             <div class="result-item">
-                <div class="result-item-title">EO (EX開き始め)</div>
-                <div id="res-eo" class="result-item-val">-</div>
+                <div id="res-title-3" class="result-item-title">EO (EX開き始め)</div>
+                <div id="res-val-3" class="result-item-val">-</div>
             </div>
             <div class="result-item">
-                <div class="result-item-title">EC (EX閉じ終わり)</div>
-                <div id="res-ec" class="result-item-val">-</div>
+                <div id="res-title-4" class="result-item-title">EC (EX閉じ終わり)</div>
+                <div id="res-val-4" class="result-item-val">-</div>
             </div>
         </div>
         <div class="result-item" style="margin-top: 10px;">
@@ -459,7 +559,7 @@
         </div>
     </div>
 
-    <!-- 添付図準拠のバルタイダイアグラム（矢印位置移動版） -->
+    <!-- バルタイダイアグラム -->
     <div class="card chart-box">
         <div class="section-title" style="border-bottom:none; margin-bottom:5px;">バルブタイミングダイアグラム</div>
         <canvas id="valvetimingCanvas" width="440" height="440"></canvas>
@@ -485,6 +585,72 @@ function stepValue(id, delta, decimals) {
     calculate();
 }
 
+function toggleSign(id, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    if (current !== 0) {
+        input.value = (-current).toFixed(decimals);
+        calculate();
+    }
+}
+
+function toggleTarget() {
+    const target = document.querySelector('input[name="target"]:checked').value;
+    const fwdEl = document.getElementById('inputs-forward');
+    const revEl = document.getElementById('inputs-reverse');
+
+    if (target === 'timing') {
+        // 逆算側の数値から順算側の値を同期しておく
+        syncReverseToForward();
+        fwdEl.style.display = 'block';
+        revEl.style.display = 'none';
+    } else {
+        // 順算側の数値から逆算側の値を同期しておく
+        syncForwardToReverse();
+        fwdEl.style.display = 'none';
+        revEl.style.display = 'block';
+    }
+    calculate();
+}
+
+// 順算値 → 逆算入力欄へ同期
+function syncForwardToReverse() {
+    const inDur = parseFloat(document.getElementById('val-in-dur').value);
+    const inCenter = parseFloat(document.getElementById('val-in-center').value);
+    const exDur = parseFloat(document.getElementById('val-ex-dur').value);
+    const exCenter = parseFloat(document.getElementById('val-ex-center').value);
+    if ([inDur, inCenter, exDur, exCenter].some(isNaN)) return;
+
+    const ioBTDC = (inDur / 2) - inCenter;
+    const icABDC = inCenter + (inDur / 2) - 180;
+    const eoBBDC = exCenter + (exDur / 2) - 180;
+    const ecATDC = (exDur / 2) - exCenter;
+
+    document.getElementById('val-io').value = ioBTDC.toFixed(1);
+    document.getElementById('val-ic').value = icABDC.toFixed(1);
+    document.getElementById('val-eo').value = eoBBDC.toFixed(1);
+    document.getElementById('val-ec').value = ecATDC.toFixed(1);
+}
+
+// 逆算値 → 順算入力欄へ同期
+function syncReverseToForward() {
+    const ioBTDC = parseFloat(document.getElementById('val-io').value);
+    const icABDC = parseFloat(document.getElementById('val-ic').value);
+    const eoBBDC = parseFloat(document.getElementById('val-eo').value);
+    const ecATDC = parseFloat(document.getElementById('val-ec').value);
+    if ([ioBTDC, icABDC, eoBBDC, ecATDC].some(isNaN)) return;
+
+    const inDur = ioBTDC + 180 + icABDC;
+    const inCenter = (inDur / 2) - ioBTDC;
+    const exDur = eoBBDC + 180 + ecATDC;
+    const exCenter = (exDur / 2) - ecATDC;
+
+    document.getElementById('val-in-dur').value = Math.round(inDur * 10) / 10;
+    document.getElementById('val-in-center').value = Math.round(inCenter * 10) / 10;
+    document.getElementById('val-ex-dur').value = Math.round(exDur * 10) / 10;
+    document.getElementById('val-ex-center').value = Math.round(exCenter * 10) / 10;
+}
+
 function loadSample() {
     const val = document.getElementById('sampleSelect').value;
     if (val === 'custom_74') {
@@ -503,39 +669,85 @@ function loadSample() {
         document.getElementById('val-ex-dur').value = '272';
         document.getElementById('val-ex-center').value = '110';
     }
+    if (val) {
+        syncForwardToReverse();
+    }
     calculate();
 }
 
-function calculate() {
-    const inDur = parseFloat(document.getElementById('val-in-dur').value);
-    const inCenter = parseFloat(document.getElementById('val-in-center').value);
-    const exDur = parseFloat(document.getElementById('val-ex-dur').value);
-    const exCenter = parseFloat(document.getElementById('val-ex-center').value);
-
-    if (isNaN(inDur) || isNaN(inCenter) || isNaN(exDur) || isNaN(exCenter)) return;
-
-    const inOpenVal = inCenter - (inDur / 2);   
-    const inCloseVal = inCenter + (inDur / 2);  
-
-    const btdc_target = Math.abs(inOpenVal); 
-    const atdc_target = 35; 
-    const overlap = btdc_target + atdc_target; 
-
-    const fmtIO = `BTDC ${btdc_target.toFixed(1)}°`;
-    const fmtIC = `ABDC ${(inCloseVal - 180).toFixed(1)}° (クランク ${inCloseVal.toFixed(1)}°)`;
-    const fmtEO = `BBDC 73.0° (クランク 107.0°)`;
-    const fmtEC = `ATDC ${atdc_target.toFixed(1)}° (クランク ${(360 + atdc_target).toFixed(1)}°)`;
-
-    document.getElementById('res-io').innerText = fmtIO;
-    document.getElementById('res-ic').innerText = fmtIC;
-    document.getElementById('res-eo').innerText = fmtEO;
-    document.getElementById('res-ec').innerText = fmtEC;
-    document.getElementById('res-overlap').innerText = `${overlap.toFixed(1)} °`;
-
-    drawChart(inOpenVal, inCloseVal, 107, atdc_target);
+// 角度表記フォーマット（マイナス値＝反対側基準にも対応）
+function formatAngleLabel(deg, posPrefix, negPrefix) {
+    if (deg >= 0) {
+        return `${posPrefix} ${deg.toFixed(1)}°`;
+    } else {
+        return `${negPrefix} ${Math.abs(deg).toFixed(1)}°`;
+    }
 }
 
-function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
+function calculate() {
+    const target = document.querySelector('input[name="target"]:checked').value;
+
+    let inDur, inCenter, exDur, exCenter;
+    let ioBTDC, icABDC, eoBBDC, ecATDC;
+
+    if (target === 'timing') {
+        inDur = parseFloat(document.getElementById('val-in-dur').value);
+        inCenter = parseFloat(document.getElementById('val-in-center').value);
+        exDur = parseFloat(document.getElementById('val-ex-dur').value);
+        exCenter = parseFloat(document.getElementById('val-ex-center').value);
+
+        if ([inDur, inCenter, exDur, exCenter].some(isNaN)) return;
+
+        ioBTDC = (inDur / 2) - inCenter;
+        icABDC = inCenter + (inDur / 2) - 180;
+        eoBBDC = exCenter + (exDur / 2) - 180;
+        ecATDC = (exDur / 2) - exCenter;
+
+        const inCloseCrank = 180 + icABDC;
+        const exOpenCrank = 180 - eoBBDC;
+        const exCloseCrank = 360 + ecATDC;
+
+        document.getElementById('res-title-1').innerText = 'IO (IN開き始め)';
+        document.getElementById('res-title-2').innerText = 'IC (IN閉じ終わり)';
+        document.getElementById('res-title-3').innerText = 'EO (EX開き始め)';
+        document.getElementById('res-title-4').innerText = 'EC (EX閉じ終わり)';
+
+        document.getElementById('res-val-1').innerText = formatAngleLabel(ioBTDC, 'BTDC', 'ATDC');
+        document.getElementById('res-val-2').innerText = `${formatAngleLabel(icABDC, 'ABDC', 'BBDC')} (クランク ${inCloseCrank.toFixed(1)}°)`;
+        document.getElementById('res-val-3').innerText = `${formatAngleLabel(eoBBDC, 'BBDC', 'ABDC')} (クランク ${exOpenCrank.toFixed(1)}°)`;
+        document.getElementById('res-val-4').innerText = `${formatAngleLabel(ecATDC, 'ATDC', 'BTDC')} (クランク ${exCloseCrank.toFixed(1)}°)`;
+
+    } else {
+        ioBTDC = parseFloat(document.getElementById('val-io').value);
+        icABDC = parseFloat(document.getElementById('val-ic').value);
+        eoBBDC = parseFloat(document.getElementById('val-eo').value);
+        ecATDC = parseFloat(document.getElementById('val-ec').value);
+
+        if ([ioBTDC, icABDC, eoBBDC, ecATDC].some(isNaN)) return;
+
+        inDur = ioBTDC + 180 + icABDC;
+        inCenter = (inDur / 2) - ioBTDC;
+        exDur = eoBBDC + 180 + ecATDC;
+        exCenter = (exDur / 2) - ecATDC;
+
+        document.getElementById('res-title-1').innerText = 'IN カム作用角';
+        document.getElementById('res-title-2').innerText = 'IN 中心角 (TDC基準)';
+        document.getElementById('res-title-3').innerText = 'EX カム作用角';
+        document.getElementById('res-title-4').innerText = 'EX 中心角 (TDC基準)';
+
+        document.getElementById('res-val-1').innerText = `${inDur.toFixed(1)} °`;
+        document.getElementById('res-val-2').innerText = `${inCenter.toFixed(1)} °`;
+        document.getElementById('res-val-3').innerText = `${exDur.toFixed(1)} °`;
+        document.getElementById('res-val-4').innerText = `${exCenter.toFixed(1)} °`;
+    }
+
+    const overlap = ioBTDC + ecATDC;
+    document.getElementById('res-overlap').innerText = `${overlap.toFixed(1)} °`;
+
+    drawChart(ioBTDC, 180 + icABDC, 180 - eoBBDC, ecATDC);
+}
+
+function drawChart(ioBTDC, inCloseCrank, exOpenCrank, ecATDC) {
     const canvas = document.getElementById('valvetimingCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -544,7 +756,6 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
     const cx = width / 2;
     const cy = height / 2;
     
-    // キャンバスをさらに拡大し、文字が余裕を持って配置される半径に設定
     const rOuter = 135;
     const rIn = 98;
     const rEx = 74;
@@ -581,10 +792,10 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
 
     const toRad = (crankDeg) => (crankDeg - 90) * (Math.PI / 180);
 
-    const inStartDeg = 360 - Math.abs(inOpen);
-    const inEndDeg = inClose;
+    const inStartDeg = 360 - ioBTDC;
+    const inEndDeg = inCloseCrank;
     const exStartDeg = exOpenCrank;
-    const exEndDeg = 360 + exCloseATDC;
+    const exEndDeg = 360 + ecATDC;
 
     // EXバルブ円環 (赤)
     ctx.strokeStyle = '#ef4444';
@@ -600,18 +811,16 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
     ctx.arc(cx, cy, rIn, toRad(inStartDeg), toRad(inEndDeg));
     ctx.stroke();
 
-    // TDC付近のオーバーラップ帯 (黄色)
-    const overlapStart = inStartDeg;
-    const overlapEnd = exCloseATDC;
-    if (overlapStart > 0 && overlapEnd > 0) {
+    // TDC付近のオーバーラップ帯 (黄色：オーバーラップがプラスの場合のみ描画)
+    if (ioBTDC + ecATDC > 0) {
         ctx.strokeStyle = '#eab308'; 
         ctx.lineWidth = 22;
         ctx.beginPath();
-        ctx.arc(cx, cy, (rIn + rEx) / 2, toRad(overlapStart), toRad(overlapEnd));
+        ctx.arc(cx, cy, (rIn + rEx) / 2, toRad(inStartDeg), toRad(exEndDeg));
         ctx.stroke();
     }
 
-    // IO, IC, EO, EC ラベル描画（文字が絶対に重ならないよう配置を最適化）
+    // IO, IC, EO, EC ラベル描画
     const drawLabel = (deg, text, color) => {
         const rad = toRad(deg);
         const x1 = cx + (rOuter - 4) * Math.cos(rad);
@@ -619,7 +828,6 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
         const x2 = cx + (rOuter + 32) * Math.cos(rad);
         const y2 = cy + (rOuter + 32) * Math.sin(rad);
 
-        // 引き出し線
         ctx.strokeStyle = color;
         ctx.lineWidth = 1.5;
         ctx.beginPath();
@@ -634,7 +842,6 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
         const textX = x2 + (Math.cos(rad) > 0 ? 5 : -5);
         const textY = y2;
 
-        // 視認性のための黒アウトライン
         ctx.lineWidth = 3.5;
         ctx.strokeStyle = '#000000';
         ctx.strokeText(text, textX, textY);
@@ -648,7 +855,7 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
     drawLabel(exStartDeg, 'EO', '#f87171'); 
     drawLabel(exEndDeg, 'EC', '#f87171');
 
-    // ★ 回転方向矢印を「右下の安全な余白エリア（角度 120°〜 150°付近）」へ移動
+    // 回転方向矢印
     const arrowStartRad = toRad(120);
     const arrowEndRad = toRad(160);
     const arrowRadius = rOuter + 45;
@@ -659,29 +866,30 @@ function drawChart(inOpen, inClose, exOpenCrank, exCloseATDC) {
     ctx.arc(cx, cy, arrowRadius, arrowStartRad, arrowEndRad);
     ctx.stroke();
     
-    // 矢印の先端（時計回り）
     const ax = cx + arrowRadius * Math.cos(arrowEndRad);
     const ay = cy + arrowRadius * Math.sin(arrowEndRad);
     ctx.fillStyle = '#aaaaaa';
     ctx.beginPath();
     ctx.moveTo(ax, ay);
-    // 進行方向に沿わせた矢印の形状
     ctx.lineTo(ax - 2, ay - 8);
     ctx.lineTo(ax + 7, ay - 4);
     ctx.fill();
 }
 
 function resetDefaults() {
+    document.querySelector('input[name="target"][value="timing"]').checked = true;
     document.getElementById('sampleSelect').value = '';
     document.getElementById('val-in-dur').value = '288';
     document.getElementById('val-in-center').value = '105';
     document.getElementById('val-ex-dur').value = '288';
     document.getElementById('val-ex-center').value = '109';
-    calculate();
+    syncForwardToReverse();
+    toggleTarget();
 }
 
 // 初期化実行
-calculate();
+syncForwardToReverse();
+toggleTarget();
 </script>
 
 </body>
