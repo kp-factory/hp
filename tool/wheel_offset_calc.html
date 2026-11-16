@@ -156,14 +156,14 @@
             border-radius: 3px;
         }
 
-        /* 修正：PC時は2カラム、スマホ（600px以下）時は1列（100%幅）にしてはみ出しを完全に防止 */
+        /* 安定した2カラムグリッドに修正 */
         .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
-        @media screen and (max-width: 600px) {
+        @media screen and (max-width: 540px) {
             .input-grid {
                 grid-template-columns: 1fr;
                 gap: 8px;
@@ -188,11 +188,20 @@
             align-items: stretch;
             gap: 5px;
             width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        /* グリッド内の入力グループが内容幅で膨らまないようにする */
+        .input-grid > .input-group {
+            min-width: 0;
+            max-width: 100%;
             box-sizing: border-box;
         }
 
         .stepper-wrapper input {
-            flex: 1;
+            flex: 1 1 0%;
+            width: 0;
             min-width: 0;
             padding: 8px 6px;
             border: 1px solid var(--border-color);
@@ -224,6 +233,8 @@
             border-radius: 4px;
             width: 40px;
             min-width: 40px;
+            flex: 0 0 40px;
+            box-sizing: border-box;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
@@ -247,8 +258,26 @@
         .sign-btn {
             width: 36px;
             min-width: 36px;
+            flex: 0 0 36px;
+            box-sizing: border-box;
             font-size: 14px;
             color: var(--accent-orange);
+        }
+
+        /* スマートフォンでステッパーがカード幅からはみ出さないようにする */
+        @media screen and (max-width: 540px) {
+            .card {
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .input-grid {
+                min-width: 0;
+            }
+
+            .stepper-wrapper {
+                max-width: 100%;
+            }
         }
 
         /* 折りたたみフェンダー設定 */
