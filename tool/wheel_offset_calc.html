@@ -851,23 +851,25 @@ function drawComparison(d) {
 
     const scale = 0.84;
     const hubX = w * 0.54;
-    const hubY = h * 0.56;
+    const hubY = h * 0.58; // 上部テキスト拡大に合わせて少し下へ調整
 
-    ctx.strokeStyle = '#555555';
+    // ハブ取付面の破線
+    ctx.strokeStyle = '#666666';
     ctx.setLineDash([6, 6]);
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(hubX, 30);
+    ctx.moveTo(hubX, 48);
     ctx.lineTo(hubX, h - 25);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    ctx.fillStyle = '#888888';
-    ctx.font = 'bold 16px sans-serif';
+    // 上部ラベル（PC・スマホ両対応の大きめサイズ）
+    ctx.fillStyle = '#cccccc';
+    ctx.font = 'bold 28px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('ハブ取付面', hubX, 22);
-    ctx.fillText('← 車両内側 (サス側)', hubX - 220, 22);
-    ctx.fillText('車両外側 (フェンダー側) →', hubX + 210, 22);
+    ctx.fillText('ハブ取付面', hubX, 34);
+    ctx.fillText('← 車両内側 (サス側)', hubX - 290, 34);
+    ctx.fillText('車両外側 (フェンダー側) →', hubX + 300, 34);
 
     function drawAssembly(outerPos, innerPos, rimDia, tireDia, tireWidth, color, alphaFill) {
         const xInner = hubX - innerPos * scale;
@@ -920,9 +922,11 @@ function drawComparison(d) {
     ctx.beginPath();
     ctx.arc(fenderX, fenderY, 6, 0, Math.PI * 2);
     ctx.fill();
-    ctx.font = 'bold 15px sans-serif';
+    
+    // フェンダー基準の文字も少し視認性アップ
+    ctx.font = 'bold 22px sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText('フェンダー基準', fenderX - 12, fenderY + 5);
+    ctx.fillText('フェンダー基準', fenderX - 14, fenderY + 7);
 }
 
 function resetDefaults() {
