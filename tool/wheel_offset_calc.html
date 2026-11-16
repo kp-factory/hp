@@ -156,14 +156,14 @@
             border-radius: 3px;
         }
 
-        /* 安定した2カラムグリッドに修正 */
+        /* レスポンシブ対応：PC時は2カラム、スマホ時は1カラムに自動切り替え */
         .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
-        @media screen and (max-width: 540px) {
+        @media screen and (max-width: 600px) {
             .input-grid {
                 grid-template-columns: 1fr;
                 gap: 8px;
