@@ -156,7 +156,7 @@
             border-radius: 3px;
         }
 
-        /* 2カラムグリッド（スマホ時は1カラム） */
+        /* 安定した2カラムグリッドに修正 */
         .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -171,7 +171,7 @@
         }
 
         .input-group {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .input-group label {
@@ -221,6 +221,7 @@
             border: 1px solid #444444;
             border-radius: 4px;
             width: 40px;
+            min-width: 40px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
@@ -229,6 +230,7 @@
             justify-content: center;
             user-select: none;
             touch-action: manipulation;
+            padding: 0;
         }
 
         .step-btn:hover {
@@ -242,6 +244,7 @@
 
         .sign-btn {
             width: 36px;
+            min-width: 36px;
             font-size: 14px;
             color: var(--accent-orange);
         }
@@ -314,11 +317,12 @@
             padding: 10px;
             text-align: center;
             margin-bottom: 12px;
+            overflow-x: auto;
         }
 
         canvas {
             width: 100%;
-            max-width: 680px;
+            max-width: 660px;
             height: auto;
             display: block;
             margin: 0 auto;
@@ -488,7 +492,7 @@
             <div class="input-group">
                 <label for="b-offset">オフセット (mm)</label>
                 <div class="stepper-wrapper">
-                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('b-offset', 0)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('b-offset', 0)" title="±反転">±</button>
                     <button type="button" class="step-btn" onclick="stepValue('b-offset', -1, 0)">－</button>
                     <input type="number" inputmode="decimal" id="b-offset" value="45" step="1" oninput="calculate()" onfocus="this.select()">
                     <button type="button" class="step-btn" onclick="stepValue('b-offset', 1, 0)">＋</button>
@@ -547,7 +551,7 @@
             <div class="input-group">
                 <label for="a-offset">オフセット (mm)</label>
                 <div class="stepper-wrapper">
-                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('a-offset', 0)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('a-offset', 0)" title="±反転">±</button>
                     <button type="button" class="step-btn" onclick="stepValue('a-offset', -1, 0)">－</button>
                     <input type="number" inputmode="decimal" id="a-offset" value="35" step="1" oninput="calculate()" onfocus="this.select()">
                     <button type="button" class="step-btn" onclick="stepValue('a-offset', 1, 0)">＋</button>
@@ -584,7 +588,7 @@
             <summary>▶ フェンダー位置の基準設定（図示用）</summary>
             <div class="input-grid" style="margin-top: 8px;">
                 <div class="input-group">
-                    <label for="f-out">今のホイール外側上端から外へ (mm)</label>
+                    <label for="f-out">今の外側から外へ (mm)</label>
                     <div class="stepper-wrapper">
                         <button type="button" class="step-btn" onclick="stepValue('f-out', -1, 0)">－</button>
                         <input type="number" inputmode="decimal" id="f-out" value="10" step="1" oninput="calculate()" onfocus="this.select()">
@@ -592,7 +596,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label for="f-up">今のホイール外側上端から上へ (mm)</label>
+                    <label for="f-up">今の外側から上へ (mm)</label>
                     <div class="stepper-wrapper">
                         <button type="button" class="step-btn" onclick="stepValue('f-up', -5, 0)">－</button>
                         <input type="number" inputmode="decimal" id="f-up" value="70" step="5" oninput="calculate()" onfocus="this.select()">
@@ -612,7 +616,7 @@
     <div class="card">
         <div class="section-title">断面位置比較図（車両後方・前方から見た断面イメージ）</div>
         <div class="canvas-wrapper">
-            <canvas id="wheelCanvas" width="660" height="340"></canvas>
+            <canvas id="wheelCanvas" width="1320" height="680"></canvas>
             <div class="legend-row">
                 <div class="legend-item"><span class="legend-color" style="background:#3b82f6;"></span> 交換前</div>
                 <div class="legend-item"><span class="legend-color" style="background:#ef4444;"></span> 交換後</div>
@@ -685,7 +689,6 @@ const inputIds = [
     'f-out', 'f-up'
 ];
 
-// 保存された入力値を読み込む
 function loadSavedValues() {
     inputIds.forEach(id => {
         const saved = localStorage.getItem('offset_calc_' + id);
@@ -695,7 +698,6 @@ function loadSavedValues() {
     });
 }
 
-// 現在の入力値を保存する
 function saveValues() {
     inputIds.forEach(id => {
         const val = document.getElementById(id).value;
@@ -703,7 +705,6 @@ function saveValues() {
     });
 }
 
-// ステップ増減処理
 function stepValue(id, delta, decimals) {
     const input = document.getElementById(id);
     const current = parseFloat(input.value) || 0;
@@ -712,7 +713,6 @@ function stepValue(id, delta, decimals) {
     calculate();
 }
 
-// プラス・マイナス符号反転
 function toggleSign(id, decimals) {
     const input = document.getElementById(id);
     const current = parseFloat(input.value) || 0;
@@ -730,7 +730,7 @@ function formatDiff(val, plusText, minusText) {
 }
 
 function calculate() {
-    saveValues(); // 入力値変更時に自動保存
+    saveValues();
 
     const bInch = parseFloat(document.getElementById('b-inch').value);
     const bRim = parseFloat(document.getElementById('b-rim').value);
@@ -818,26 +818,25 @@ function drawComparison(d) {
 
     ctx.clearRect(0, 0, w, h);
 
-    const scale = 0.42;
+    const scale = 0.84;
     const hubX = w * 0.54;
     const hubY = h * 0.56;
 
-    // 補助線（ハブ取付面）
     ctx.strokeStyle = '#555555';
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 6]);
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(hubX, 20);
-    ctx.lineTo(hubX, h - 15);
+    ctx.moveTo(hubX, 30);
+    ctx.lineTo(hubX, h - 25);
     ctx.stroke();
     ctx.setLineDash([]);
 
     ctx.fillStyle = '#888888';
-    ctx.font = 'bold 12px sans-serif';
+    ctx.font = 'bold 16px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('ハブ取付面', hubX, 15);
-    ctx.fillText('← 車両内側 (サス側)', hubX - 120, 15);
-    ctx.fillText('車両外側 (フェンダー側) →', hubX + 110, 15);
+    ctx.fillText('ハブ取付面', hubX, 22);
+    ctx.fillText('← 車両内側 (サス側)', hubX - 220, 22);
+    ctx.fillText('車両外側 (フェンダー側) →', hubX + 210, 22);
 
     function drawAssembly(outerPos, innerPos, rimDia, tireDia, tireWidth, color, alphaFill) {
         const xInner = hubX - innerPos * scale;
@@ -854,14 +853,14 @@ function drawComparison(d) {
 
         ctx.strokeStyle = color;
         ctx.fillStyle = alphaFill;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.roundRect(xTireLeft, yTireTop, tireW, tireH, 10);
+        ctx.roundRect(xTireLeft, yTireTop, tireW, tireH, 16);
         ctx.fill();
         ctx.stroke();
 
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 4;
         ctx.strokeRect(xInner, yRimTop, rimW, rimH);
 
         ctx.beginPath();
@@ -879,24 +878,23 @@ function drawComparison(d) {
     const fenderY = beforePts.yRimTop - d.fUp * scale;
 
     ctx.strokeStyle = '#22c55e';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.moveTo(fenderX - 45, fenderY - 35);
-    ctx.quadraticCurveTo(fenderX, fenderY - 30, fenderX, fenderY);
-    ctx.lineTo(fenderX, fenderY + 18);
+    ctx.moveTo(fenderX - 70, fenderY - 50);
+    ctx.quadraticCurveTo(fenderX, fenderY - 45, fenderX, fenderY);
+    ctx.lineTo(fenderX, fenderY + 28);
     ctx.stroke();
 
     ctx.fillStyle = '#22c55e';
     ctx.beginPath();
-    ctx.arc(fenderX, fenderY, 4, 0, Math.PI * 2);
+    ctx.arc(fenderX, fenderY, 6, 0, Math.PI * 2);
     ctx.fill();
-    ctx.font = 'bold 11px sans-serif';
+    ctx.font = 'bold 15px sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText('フェンダー基準', fenderX - 8, fenderY + 4);
+    ctx.fillText('フェンダー基準', fenderX - 12, fenderY + 5);
 }
 
 function resetDefaults() {
-    // ローカルストレージの保存データをクリア
     inputIds.forEach(id => {
         localStorage.removeItem('offset_calc_' + id);
     });
@@ -921,7 +919,6 @@ function resetDefaults() {
     calculate();
 }
 
-// ページ読み込み時に保存された値を復元してから計算実行
 loadSavedValues();
 calculate();
 </script>
