@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホイールオフセット・タイヤ外径計算シミュレーター</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --text-color: #ffffff;
+            --border-color: #333333;
+            --accent-orange: #ffaa00;
+            --before-color: #3b82f6;
+            --after-color: #ef4444;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        /* --- ナビゲーションバー (共通) --- */
+        .navbar {
+            background-color: #000000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #333333;
+            box-sizing: border-box;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            height: 60px;
+        }
+
+        .nav-left-space,
+        .nav-right-item {
+            width: 90px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right-item {
+            justify-content: flex-end;
+        }
+
+        .navbar-title {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .navbar-title:hover {
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 480px) {
+            .nav-left-space {
+                width: 10px;
+            }
+            .navbar-title {
+                font-size: 16px;
+            }
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .nav-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        /* --- メインコンテンツコンテナ --- */
+        .container {
+            width: 98%;
+            max-width: 740px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .top-content {
+            padding-top: 85px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin: 15px 0 25px 0;
+            color: #ffffff;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px 12px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0 12px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #333333;
+            color: var(--accent-orange);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge-before {
+            background-color: var(--before-color);
+            color: #ffffff;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .badge-after {
+            background-color: var(--after-color);
+            color: #ffffff;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        /* 2カラムグリッド（スマホ時は1カラム） */
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media screen and (max-width: 540px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        .input-group {
+            margin-bottom: 6px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #dddddd;
+        }
+
+        /* --- 数値ステッパーUI --- */
+        .stepper-wrapper {
+            display: flex;
+            align-items: stretch;
+            gap: 5px;
+        }
+
+        .stepper-wrapper input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #000000;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .stepper-wrapper input::-webkit-outer-spin-button,
+        .stepper-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .stepper-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        .step-btn {
+            background-color: #222222;
+            color: #ffffff;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            width: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .step-btn:hover {
+            background-color: #333333;
+        }
+
+        .step-btn:active {
+            background-color: var(--accent-orange);
+            color: #000000;
+        }
+
+        .sign-btn {
+            width: 36px;
+            font-size: 14px;
+            color: var(--accent-orange);
+        }
+
+        /* 折りたたみフェンダー設定 */
+        details.fender-details {
+            margin-top: 8px;
+            border-top: 1px dashed #333333;
+            padding-top: 8px;
+        }
+
+        details.fender-details summary {
+            cursor: pointer;
+            color: var(--accent-orange);
+            font-size: 14px;
+            padding: 4px 0;
+            user-select: none;
+        }
+
+        details.fender-details summary:hover {
+            text-decoration: underline;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        button.main-btn {
+            background-color: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+        }
+
+        button.main-btn:hover {
+            background-color: #2563eb;
+        }
+
+        button.reset-btn {
+            background-color: #333333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.reset-btn:hover {
+            background-color: #444444;
+        }
+
+        /* --- 比較図キャンバス --- */
+        .canvas-wrapper {
+            background-color: #000000;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        canvas {
+            width: 100%;
+            max-width: 680px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .legend-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        /* --- 計算結果詳細テーブル --- */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .detail-table th, .detail-table td {
+            border: 1px solid #333333;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .detail-table th {
+            background-color: #1a1a1a;
+            color: #cccccc;
+        }
+
+        .highlight-val {
+            color: var(--accent-orange);
+            font-size: 16px;
+        }
+
+        /* --- 追従型メイン結果ボックス --- */
+        .result-box {
+            background: #111111;
+            border: 1px solid var(--accent-orange);
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-top: 20px;
+            text-align: center;
+            position: sticky;
+            bottom: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .result-item-label {
+            font-size: 13px;
+            color: #cccccc;
+        }
+
+        .result-value {
+            font-size: 1.45rem;
+            color: var(--accent-orange);
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .note {
+            font-size: 0.82rem;
+            color: #aaaaaa;
+            margin-top: 6px;
+            font-weight: normal;
+        }
+
+        /* --- フッターエリア (共通) --- */
+        .footer-container {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid #333333;
+            width: 100%;
+            margin: 0 0 20px 0;
+        }
+
+        .footer-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 30px;
+            gap: 8px;
+        }
+
+        .footer-link {
+            color: #666666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ナビゲーションメニュー -->
+  <nav class="navbar">
+    <ul class="nav-menu">
+      <li class="nav-left-item">
+        <a href="index.html">
+          <img src="../image1/kprogo3.jpg" alt="Logo" class="nav-logo-img">
+        </a>
+      </li>
+      <li><a href="tool_index.html" class="navbar-title">TOOL</a></li>
+      <li class="nav-right-space"></li>
+    </ul>
+  </nav>
+
+<div class="container top-content">
+    <h1>ホイールオフセット・タイヤ外径計算シミュレーター</h1>
+    
+    <!-- 今のホイールとタイヤ -->
+    <div class="card">
+        <div class="section-title">
+            <span>今のホイールとタイヤ</span>
+            <span class="badge-before">交換前</span>
+        </div>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="b-inch">ホイール径 (inch)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('b-inch', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="b-inch" value="18" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('b-inch', 1, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="b-rim">リム幅 (J)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('b-rim', -0.5, 1)">－</button>
+                    <input type="number" inputmode="decimal" id="b-rim" value="9.0" step="0.5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('b-rim', 0.5, 1)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="b-offset">オフセット (mm)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('b-offset', 0)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn" onclick="stepValue('b-offset', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="b-offset" value="45" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('b-offset', 1, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="b-spacer">スペーサー (mm)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('b-spacer', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="b-spacer" value="0" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('b-spacer', 1, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="b-width">タイヤ断面幅 (mm)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('b-width', -10, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="b-width" value="215" step="5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('b-width', 10, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="b-aspect">扁平率 (%)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('b-aspect', -5, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="b-aspect" value="35" step="5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('b-aspect', 5, 0)">＋</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交換後のホイールとタイヤ -->
+    <div class="card">
+        <div class="section-title">
+            <span>交換後のホイールとタイヤ</span>
+            <span class="badge-after">交換後</span>
+        </div>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="a-inch">ホイール径 (inch)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('a-inch', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="a-inch" value="19" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('a-inch', 1, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="a-rim">リム幅 (J)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('a-rim', -0.5, 1)">－</button>
+                    <input type="number" inputmode="decimal" id="a-rim" value="10.0" step="0.5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('a-rim', 0.5, 1)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="a-offset">オフセット (mm)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn sign-btn" onclick="toggleSign('a-offset', 0)" title="プラス・マイナス反転">±</button>
+                    <button type="button" class="step-btn" onclick="stepValue('a-offset', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="a-offset" value="35" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('a-offset', 1, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="a-spacer">スペーサー (mm)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('a-spacer', -1, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="a-spacer" value="0" step="1" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('a-spacer', 1, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="a-width">タイヤ断面幅 (mm)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('a-width', -10, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="a-width" value="235" step="5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('a-width', 10, 0)">＋</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="a-aspect">扁平率 (%)</label>
+                <div class="stepper-wrapper">
+                    <button type="button" class="step-btn" onclick="stepValue('a-aspect', -5, 0)">－</button>
+                    <input type="number" inputmode="decimal" id="a-aspect" value="35" step="5" oninput="calculate()" onfocus="this.select()">
+                    <button type="button" class="step-btn" onclick="stepValue('a-aspect', 5, 0)">＋</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- フェンダー位置オプション -->
+        <details class="fender-details" open>
+            <summary>▶ フェンダー位置の基準設定（図示用）</summary>
+            <div class="input-grid" style="margin-top: 8px;">
+                <div class="input-group">
+                    <label for="f-out">今のホイール外側上端から外へ (mm)</label>
+                    <div class="stepper-wrapper">
+                        <button type="button" class="step-btn" onclick="stepValue('f-out', -1, 0)">－</button>
+                        <input type="number" inputmode="decimal" id="f-out" value="10" step="1" oninput="calculate()" onfocus="this.select()">
+                        <button type="button" class="step-btn" onclick="stepValue('f-out', 1, 0)">＋</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="f-up">今のホイール外側上端から上へ (mm)</label>
+                    <div class="stepper-wrapper">
+                        <button type="button" class="step-btn" onclick="stepValue('f-up', -5, 0)">－</button>
+                        <input type="number" inputmode="decimal" id="f-up" value="70" step="5" oninput="calculate()" onfocus="this.select()">
+                        <button type="button" class="step-btn" onclick="stepValue('f-up', 5, 0)">＋</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <div class="btn-container">
+            <button type="button" class="reset-btn" onclick="resetDefaults()">初期化</button>
+            <button type="button" class="main-btn" onclick="calculate()">計算実行</button>
+        </div>
+    </div>
+
+    <!-- 比較図・詳細データ -->
+    <div class="card">
+        <div class="section-title">断面位置比較図（車両後方・前方から見た断面イメージ）</div>
+        <div class="canvas-wrapper">
+            <canvas id="wheelCanvas" width="660" height="340"></canvas>
+            <div class="legend-row">
+                <div class="legend-item"><span class="legend-color" style="background:#3b82f6;"></span> 交換前</div>
+                <div class="legend-item"><span class="legend-color" style="background:#ef4444;"></span> 交換後</div>
+                <div class="legend-item"><span class="legend-color" style="background:#22c55e;"></span> フェンダー基準</div>
+            </div>
+        </div>
+
+        <div class="section-title">タイヤ外径・スピードメーター誤差</div>
+        <table class="detail-table">
+            <thead>
+                <tr>
+                    <th>項目</th>
+                    <th>交換前</th>
+                    <th>交換後</th>
+                    <th>変化量</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>タイヤ外径</td>
+                    <td id="res-b-dia">-</td>
+                    <td id="res-a-dia">-</td>
+                    <td id="res-diff-dia" class="highlight-val">-</td>
+                </tr>
+                <tr>
+                    <td>タイヤ外周</td>
+                    <td id="res-b-circ">-</td>
+                    <td id="res-a-circ">-</td>
+                    <td id="res-diff-circ">-</td>
+                </tr>
+                <tr>
+                    <td>メーター誤差</td>
+                    <td colspan="2" id="res-meter-err" class="highlight-val">-</td>
+                    <td id="res-real-speed">-</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="note">※外径変化による車高変化の目安は「外径差 ÷ 2」です。メーター100km/h表示時の実速度を表示しています。</div>
+    </div>
+
+    <!-- 追従型メイン結果ボックス -->
+    <div class="result-box">
+        <div class="result-grid">
+            <div>
+                <div class="result-item-label">ホイール外側（フェンダー側）</div>
+                <div id="res-outer" class="result-value">-</div>
+            </div>
+            <div>
+                <div class="result-item-label">ホイール内側（サスペンション側）</div>
+                <div id="res-inner" class="result-value">-</div>
+            </div>
+        </div>
+        <div id="res-fender-note" class="note"></div>
+    </div>
+</div>
+
+  <!-- フッターエリア -->
+  <footer class="footer-container">
+    <hr class="footer-divider">
+    <div class="footer-content-wrapper">
+      <a href="../index.html" class="footer-link">Copyright© 2001 KP-ファクトリー</a>
+      <a href="../index.html" class="footer-link">Since 1985</a>
+    </div>
+  </footer>
+
+<script>
+const inputIds = [
+    'b-inch', 'b-rim', 'b-offset', 'b-spacer', 'b-width', 'b-aspect',
+    'a-inch', 'a-rim', 'a-offset', 'a-spacer', 'a-width', 'a-aspect',
+    'f-out', 'f-up'
+];
+
+// 保存された入力値を読み込む
+function loadSavedValues() {
+    inputIds.forEach(id => {
+        const saved = localStorage.getItem('offset_calc_' + id);
+        if (saved !== null) {
+            document.getElementById(id).value = saved;
+        }
+    });
+}
+
+// 現在の入力値を保存する
+function saveValues() {
+    inputIds.forEach(id => {
+        const val = document.getElementById(id).value;
+        localStorage.setItem('offset_calc_' + id, val);
+    });
+}
+
+// ステップ増減処理
+function stepValue(id, delta, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    const next = Math.round((current + delta) * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    input.value = next.toFixed(decimals);
+    calculate();
+}
+
+// プラス・マイナス符号反転
+function toggleSign(id, decimals) {
+    const input = document.getElementById(id);
+    const current = parseFloat(input.value) || 0;
+    if (current !== 0) {
+        input.value = (-current).toFixed(decimals);
+        calculate();
+    }
+}
+
+function formatDiff(val, plusText, minusText) {
+    const rounded = Math.round(val * 10) / 10;
+    if (rounded > 0) return `+${rounded.toFixed(1)} mm (${plusText})`;
+    if (rounded < 0) return `${rounded.toFixed(1)} mm (${minusText})`;
+    return `0.0 mm (変化なし)`;
+}
+
+function calculate() {
+    saveValues(); // 入力値変更時に自動保存
+
+    const bInch = parseFloat(document.getElementById('b-inch').value);
+    const bRim = parseFloat(document.getElementById('b-rim').value);
+    const bOffset = parseFloat(document.getElementById('b-offset').value);
+    const bSpacer = parseFloat(document.getElementById('b-spacer').value);
+    const bWidth = parseFloat(document.getElementById('b-width').value);
+    const bAspect = parseFloat(document.getElementById('b-aspect').value);
+
+    const aInch = parseFloat(document.getElementById('a-inch').value);
+    const aRim = parseFloat(document.getElementById('a-rim').value);
+    const aOffset = parseFloat(document.getElementById('a-offset').value);
+    const aSpacer = parseFloat(document.getElementById('a-spacer').value);
+    const aWidth = parseFloat(document.getElementById('a-width').value);
+    const aAspect = parseFloat(document.getElementById('a-aspect').value);
+
+    const fOut = parseFloat(document.getElementById('f-out').value) || 0;
+    const fUp = parseFloat(document.getElementById('f-up').value) || 0;
+
+    if ([bInch, bRim, bOffset, bSpacer, bWidth, bAspect, aInch, aRim, aOffset, aSpacer, aWidth, aAspect].some(v => isNaN(v))) {
+        return;
+    }
+
+    const bEffOffset = bOffset - bSpacer;
+    const aEffOffset = aOffset - aSpacer;
+
+    const bRimWidthMm = bRim * 25.4;
+    const aRimWidthMm = aRim * 25.4;
+
+    const bOuterPos = (bRimWidthMm / 2) - bEffOffset;
+    const aOuterPos = (aRimWidthMm / 2) - aEffOffset;
+
+    const bInnerPos = (bRimWidthMm / 2) + bEffOffset;
+    const aInnerPos = (aRimWidthMm / 2) + aEffOffset;
+
+    const diffOuter = aOuterPos - bOuterPos;
+    const diffInner = aInnerPos - bInnerPos;
+
+    const bSidewall = bWidth * (bAspect / 100);
+    const aSidewall = aWidth * (aAspect / 100);
+    const bDia = (bInch * 25.4) + (bSidewall * 2);
+    const aDia = (aInch * 25.4) + (aSidewall * 2);
+    const diffDia = aDia - bDia;
+
+    const bCirc = bDia * Math.PI;
+    const aCirc = aDia * Math.PI;
+    const diffCirc = aCirc - bCirc;
+
+    const meterErr = ((aDia - bDia) / bDia) * 100;
+    const realSpeed = 100 * (aDia / bDia);
+
+    document.getElementById('res-outer').textContent = formatDiff(diffOuter, '外に出る', '引っ込む');
+    document.getElementById('res-inner').textContent = formatDiff(diffInner, '内に入る', '外に出る');
+
+    const fenderMargin = fOut - diffOuter;
+    const fenderNote = document.getElementById('res-fender-note');
+    if (fenderMargin < 0) {
+        fenderNote.innerHTML = `<span style="color:#ef4444; font-weight:bold;">⚠ フェンダー基準より ${Math.abs(fenderMargin).toFixed(1)} mm 外側にはみ出します</span>`;
+    } else {
+        fenderNote.textContent = `フェンダー基準までの余裕：残り ${fenderMargin.toFixed(1)} mm`;
+    }
+
+    document.getElementById('res-b-dia').textContent = `${bDia.toFixed(1)} mm`;
+    document.getElementById('res-a-dia').textContent = `${aDia.toFixed(1)} mm`;
+    document.getElementById('res-diff-dia').textContent = `${diffDia >= 0 ? '+' : ''}${diffDia.toFixed(1)} mm`;
+
+    document.getElementById('res-b-circ').textContent = `${Math.round(bCirc)} mm`;
+    document.getElementById('res-a-circ').textContent = `${Math.round(aCirc)} mm`;
+    document.getElementById('res-diff-circ').textContent = `${diffCirc >= 0 ? '+' : ''}${Math.round(diffCirc)} mm`;
+
+    document.getElementById('res-meter-err').textContent = `${meterErr >= 0 ? '+' : ''}${meterErr.toFixed(2)} %`;
+    document.getElementById('res-real-speed').textContent = `実速 ${realSpeed.toFixed(1)} km/h`;
+
+    drawComparison({
+        bOuterPos, bInnerPos, bRimDia: bInch * 25.4, bDia, bWidth,
+        aOuterPos, aInnerPos, aRimDia: aInch * 25.4, aDia, aWidth,
+        fOut, fUp
+    });
+}
+
+function drawComparison(d) {
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const scale = 0.42;
+    const hubX = w * 0.54;
+    const hubY = h * 0.56;
+
+    // 補助線（ハブ取付面）
+    ctx.strokeStyle = '#555555';
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(hubX, 20);
+    ctx.lineTo(hubX, h - 15);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#888888';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ハブ取付面', hubX, 15);
+    ctx.fillText('← 車両内側 (サス側)', hubX - 120, 15);
+    ctx.fillText('車両外側 (フェンダー側) →', hubX + 110, 15);
+
+    function drawAssembly(outerPos, innerPos, rimDia, tireDia, tireWidth, color, alphaFill) {
+        const xInner = hubX - innerPos * scale;
+        const xOuter = hubX + outerPos * scale;
+        const rimW = xOuter - xInner;
+        const rimH = rimDia * scale;
+        const yRimTop = hubY - rimH / 2;
+
+        const tireH = tireDia * scale;
+        const yTireTop = hubY - tireH / 2;
+        const wheelCenterX = (xInner + xOuter) / 2;
+        const tireW = tireWidth * scale;
+        const xTireLeft = wheelCenterX - tireW / 2;
+
+        ctx.strokeStyle = color;
+        ctx.fillStyle = alphaFill;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(xTireLeft, yTireTop, tireW, tireH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(xInner, yRimTop, rimW, rimH);
+
+        ctx.beginPath();
+        ctx.moveTo(hubX, hubY - rimH * 0.25);
+        ctx.lineTo(hubX, hubY + rimH * 0.25);
+        ctx.stroke();
+
+        return { xOuter, yRimTop, yTireTop };
+    }
+
+    const beforePts = drawAssembly(d.bOuterPos, d.bInnerPos, d.bRimDia, d.bDia, d.bWidth, '#3b82f6', 'rgba(59, 130, 246, 0.12)');
+    const afterPts = drawAssembly(d.aOuterPos, d.aInnerPos, d.aRimDia, d.aDia, d.aWidth, '#ef4444', 'rgba(239, 68, 68, 0.15)');
+
+    const fenderX = beforePts.xOuter + d.fOut * scale;
+    const fenderY = beforePts.yRimTop - d.fUp * scale;
+
+    ctx.strokeStyle = '#22c55e';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(fenderX - 45, fenderY - 35);
+    ctx.quadraticCurveTo(fenderX, fenderY - 30, fenderX, fenderY);
+    ctx.lineTo(fenderX, fenderY + 18);
+    ctx.stroke();
+
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath();
+    ctx.arc(fenderX, fenderY, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('フェンダー基準', fenderX - 8, fenderY + 4);
+}
+
+function resetDefaults() {
+    // ローカルストレージの保存データをクリア
+    inputIds.forEach(id => {
+        localStorage.removeItem('offset_calc_' + id);
+    });
+
+    document.getElementById('b-inch').value = '13';
+    document.getElementById('b-rim').value = '6.0';
+    document.getElementById('b-offset').value = '15';
+    document.getElementById('b-spacer').value = '0';
+    document.getElementById('b-width').value = '175';
+    document.getElementById('b-aspect').value = '60';
+
+    document.getElementById('a-inch').value = '13';
+    document.getElementById('a-rim').value = '7.0';
+    document.getElementById('a-offset').value = '15';
+    document.getElementById('a-spacer').value = '0';
+    document.getElementById('a-width').value = '175';
+    document.getElementById('a-aspect').value = '60';
+
+    document.getElementById('f-out').value = '15';
+    document.getElementById('f-up').value = '140';
+
+    calculate();
+}
+
+// ページ読み込み時に保存された値を復元してから計算実行
+loadSavedValues();
+calculate();
+</script>
+
+</body>
+</html>
