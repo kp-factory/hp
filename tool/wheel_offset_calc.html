@@ -348,7 +348,7 @@
             padding: 10px;
             text-align: center;
             margin-bottom: 12px;
-            overflow-x: auto;
+            overflow-x: hidden;
         }
 
         canvas {
@@ -357,6 +357,12 @@
             height: auto;
             display: block;
             margin: 0 auto;
+        }
+
+        @media screen and (max-width: 540px) {
+            #wheelCanvas { width: 100%; max-width: 100%; }
+            .canvas-wrapper { padding: 4px; }
+            .legend-row { gap: 9px; font-size: 11px; flex-wrap: wrap; }
         }
 
         .legend-row {
@@ -844,32 +850,44 @@ function calculate() {
 function drawComparison(d) {
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
+    const mobile = window.matchMedia('(max-width: 540px)').matches;
+    // スマホでは横幅を狭く、縦長の描画領域に切り替えて図を拡大する
+    canvas.width = mobile ? 720 : 1320;
+    canvas.height = mobile ? 1000 : 680;
     const w = canvas.width;
     const h = canvas.height;
 
     ctx.clearRect(0, 0, w, h);
 
-    const scale = 0.84;
-    const hubX = w * 0.54;
-    const hubY = h * 0.58; // 上部テキスト拡大に合わせて少し下へ調整
+    const scale = mobile ? 1.20 : 0.84;
+    const hubX = mobile ? w * 0.50 : w * 0.54;
+    const hubY = mobile ? h * 0.59 : h * 0.58;
 
     // ハブ取付面の破線
     ctx.strokeStyle = '#666666';
     ctx.setLineDash([6, 6]);
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(hubX, 48);
+    ctx.moveTo(hubX, mobile ? 160 : 48);
     ctx.lineTo(hubX, h - 25);
     ctx.stroke();
     ctx.setLineDash([]);
 
     // 上部ラベル（PC・スマホ両対応の大きめサイズ）
     ctx.fillStyle = '#cccccc';
-    ctx.font = 'bold 28px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('ハブ取付面', hubX, 34);
-    ctx.fillText('← 車両内側 (サス側)', hubX - 290, 34);
-    ctx.fillText('車両外側 (フェンダー側) →', hubX + 300, 34);
+    if (mobile) {
+        ctx.font = 'bold 34px sans-serif';
+        ctx.fillText('ハブ取付面', hubX, 45);
+        ctx.font = 'bold 29px sans-serif';
+        ctx.fillText('← 車両内側 (サス側)', w * 0.27, 96);
+        ctx.fillText('車両外側 (フェンダー側) →', w * 0.69, 143);
+    } else {
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText('ハブ取付面', hubX, 34);
+        ctx.fillText('← 車両内側 (サス側)', hubX - 290, 34);
+        ctx.fillText('車両外側 (フェンダー側) →', hubX + 300, 34);
+    }
 
     function drawAssembly(outerPos, innerPos, rimDia, tireDia, tireWidth, color, alphaFill) {
         const xInner = hubX - innerPos * scale;
@@ -924,7 +942,7 @@ function drawComparison(d) {
     ctx.fill();
     
     // フェンダー基準の文字も少し視認性アップ
-    ctx.font = 'bold 22px sans-serif';
+    ctx.font = mobile ? 'bold 29px sans-serif' : 'bold 22px sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText('フェンダー基準', fenderX - 14, fenderY + 7);
 }
@@ -956,6 +974,7 @@ function resetDefaults() {
 
 loadSavedValues();
 calculate();
+window.addEventListener('resize', () => calculate());
 </script>
 
 </body>
