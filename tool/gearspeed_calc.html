@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ギヤ比・速度計算シミュレーター</title>
+    <title>ギヤ比・速度計算シミュレーター｜タイヤ外径・ファイナル・各ギヤの車速比較 | KP-ファクトリー</title>
+    <meta name="description" content="タイヤサイズ、ミッションギヤ比、ファイナルギヤ比、エンジン回転数から各ギヤの理論車速を計算。変更前後の速度特性をグラフで比較できる無料シミュレーター。">
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -422,6 +423,17 @@
                 width: 100%;
             }
         }
+
+        /* SEO解説エリア：計算画面と独立した静的コンテンツ */
+        .seo-guide { margin-top: 24px; font-weight: normal; line-height: 1.85; overflow-wrap: anywhere; }
+        .seo-guide h2 { color: #ffaa00; font-size: 19px; border-bottom: 1px solid #444; padding-bottom: 7px; margin: 24px 0 12px; }
+        .seo-guide h3 { color: #ffaa00; font-size: 16px; margin: 18px 0 8px; }
+        .seo-guide p { margin: 9px 0 13px; color: #e2e2e2; }
+        .seo-guide ul, .seo-guide ol { margin: 8px 0 16px; padding-left: 1.5em; color: #e2e2e2; }
+        .seo-guide li { margin-bottom: 7px; }
+        .seo-guide .formula { background: #080808; border-left: 3px solid #ffaa00; padding: 12px; margin: 12px 0; font-weight: bold; color: #fff; overflow-wrap: anywhere; }
+        .seo-guide strong { color: #fff; }
+        @media (max-width: 600px) { .seo-guide { padding: 12px; } .seo-guide h2 { font-size: 17px; } }
     </style>
 </head>
 <body>
@@ -570,6 +582,43 @@
             </div>
         </div>
     </div>
+
+    <!-- 計算画面の下：SEO対策と使い方の解説 -->
+    <section class="card seo-guide" aria-label="ギヤ比・速度計算の解説">
+        <h2>ギヤ比・速度計算シミュレーターとは？</h2>
+        <p>タイヤサイズ、ファイナルギヤ比、ミッション各段のギヤ比、エンジン回転数を入力すると、<strong>各ギヤ・各回転数における理論車速（km/h）</strong>を計算できるツールです。ギヤ比やタイヤ外径を変更した場合の速度特性をグラフで比較でき、旧車やスポーツカーのミッション・ファイナル変更の検討に役立ちます。</p>
+
+        <h2>シミュレーターの使い方</h2>
+        <ol>
+            <li><strong>タイヤ・ホイール仕様</strong>にホイール直径（インチ）、タイヤ幅（mm）、扁平率（%）を入力します。</li>
+            <li><strong>最高回転数</strong>を設定します。速度一覧は原則1,000rpm刻みで表示されます。</li>
+            <li><strong>ファイナルギヤレシオ</strong>と<strong>1～6速のミッションギヤ比</strong>を入力します。使用しない段は空欄のままで構いません。</li>
+            <li>「計算する」を押すと速度一覧と速度特性グラフを確認できます。入力値の変更時にも再計算されます。</li>
+            <li>「現在の値を基準値（変更前）にコピー」を押した後にギヤ比などを変更すると、変更前（破線）と変更後（実線）の特性を比較できます。</li>
+        </ol>
+        <p>ファイナルとミッションのサンプルは選択・登録できます。入力値と登録データは使用中のブラウザに保存されます。</p>
+
+        <h2>車速の計算式</h2>
+        <p>エンジン回転数をタイヤの回転数に換算し、タイヤ周長から理論車速を求めます。</p>
+        <div class="formula">理論車速 (km/h) ＝ エンジン回転数 (rpm) × タイヤ周長 (m) × 60 ÷ (ミッションギヤ比 × ファイナルギヤ比 × 1,000)</div>
+        <div class="formula">タイヤ外径 (mm) ＝ ホイール直径 (インチ) × 25.4 ＋ 2 × タイヤ幅 (mm) × 扁平率 (%) ÷ 100<br>タイヤ周長 (m) ＝ タイヤ外径 (mm) × π ÷ 1,000</div>
+
+        <h3>計算例：175/60R13・4速・7,000rpm</h3>
+        <p>ホイール13インチ、タイヤ幅175mm、扁平率60%、4速ギヤ比1.000、ファイナルギヤ比3.583の場合、計算タイヤ外径は<strong>540.2mm</strong>、7,000rpm時の4速理論車速は<strong>約199km/h</strong>です。これはギヤ比から算出した数値であり、実際にその速度まで加速できることを示すものではありません。</p>
+
+        <h2>ギヤ比・ファイナルギヤ比を変更するとどうなる？</h2>
+        <ul>
+            <li><strong>数値が大きいギヤ比（ローギヤ化）</strong>：同じエンジン回転数での車速が低くなり、駆動輪へ伝わるトルクの倍率は大きくなります。</li>
+            <li><strong>数値が小さいギヤ比（ハイギヤ化）</strong>：同じエンジン回転数での車速が高くなりますが、加速性能や到達可能な最高速はエンジン出力などにも左右されます。</li>
+            <li><strong>タイヤ外径が大きい</strong>：同じ回転数・ギヤ比での理論車速が高くなります。外径が小さい場合は逆になります。</li>
+        </ul>
+
+        <h2>グラフ比較の活用方法</h2>
+        <p>基準値を保存してからファイナルギヤやミッションギヤ比を変更すると、変更前後の速度特性を重ねて表示できます。各回転数での速度差や、シフトアップ後の速度域を検討する際に便利です。グラフ上の1,000rpm刻みのポイントをクリックすると、各ギヤの速度比較表が表示されます。</p>
+
+        <h2>計算結果についての注意点</h2>
+        <p>本ツールは<strong>タイヤの幾何学的な外径とギヤ比から求める理論値</strong>です。実際の車速はタイヤの実転がり周長、空気圧、荷重、摩耗、駆動系の滑りなどで変化します。また、空気抵抗、走行抵抗、エンジン出力、レブリミットなどは考慮していません。車両改造や部品選定の際は、実車の仕様と安全性を別途確認してください。</p>
+    </section>
 </div>
 
   <!-- フッターエリア -->

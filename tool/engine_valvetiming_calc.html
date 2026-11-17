@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>バルブタイミング計算シミュレーター</title>
+    <title>バルブタイミング計算シミュレーター｜カム作用角・中心角・オーバーラップ計算＆逆算｜KP-ファクトリー</title>
+    <meta name="description" content="エンジンのバルブタイミングを無料計算。カムシャフトのIN・EX作用角と中心角からIO・IC・EO・ECの開閉時期やオーバーラップ角を算出。開閉角度から作用角・中心角の逆算も可能。バルブタイミングダイアグラムで視覚的に確認できます。">
+
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -343,6 +345,16 @@
             .crank-angle { font-size: 0.68em; }
         }
 
+
+        /* 計算ツールの解説（SEO・スマートフォン対応） */
+        .tool-guide { text-align: left; font-weight: normal; }
+        .tool-guide h2 { font-size: 18px; color: #ffaa00; margin: 4px 0 12px; }
+        .tool-guide h3 { font-size: 16px; color: #ffffff; margin: 20px 0 8px; }
+        .tool-guide p, .tool-guide li { font-size: 14px; line-height: 1.85; }
+        .tool-guide ul { padding-left: 1.5em; }
+        .tool-guide li { margin-bottom: 5px; }
+        .tool-guide .formula { background: #1b1b1b; border-left: 3px solid #ffaa00; padding: 10px 12px; overflow-wrap: anywhere; }
+
         .chart-box {
             background: #111111;
             border: 1px solid #333333;
@@ -575,6 +587,38 @@
         <canvas id="valvetimingCanvas" width="440" height="440"></canvas>
         <div class="note" style="margin-top:8px;">※外側：クランク角度（TDC / BDC）、青：IN側 / 赤：EX側 / 黄帯：オーバーラップ</div>
     </div>
+
+    <!-- 計算画面の下に設置する解説コンテンツ -->
+    <section class="card tool-guide" aria-labelledby="tool-guide-title">
+        <h2 id="tool-guide-title">バルブタイミング計算シミュレーターの使い方</h2>
+        <p>カムシャフトの作用角とバルブタイミング中心角から、吸気（IN）・排気（EX）バルブの開閉タイミングを計算できる無料ツールです。開閉タイミングから作用角・中心角を求める逆算にも対応し、バルブオーバーラップ角とタイミングダイアグラムも確認できます。</p>
+
+        <h3>開閉タイミングを計算する</h3>
+        <p>「開閉タイミング（IO・IC・EO・EC）」を選択し、IN／EXそれぞれのカム作用角と中心角を入力します。計算結果には、開き始め・閉じ終わりの角度とバルブオーバーラップ角が表示されます。</p>
+
+        <h3>作用角・中心角を逆算する</h3>
+        <p>「作用角・中心角（逆算）」を選択し、IO・IC・EO・ECの各角度を入力します。基準位置より反対側になる場合は、入力値をマイナスにしてください。入力欄の「±」ボタンでも符号を切り替えられます。</p>
+
+        <h3>角度表記の意味</h3>
+        <ul>
+            <li><strong>BTDC（上死点前）</strong>：ピストンが上死点に達する前の角度</li>
+            <li><strong>ATDC（上死点後）</strong>：ピストンが上死点を通過した後の角度</li>
+            <li><strong>BBDC（下死点前）</strong>：ピストンが下死点に達する前の角度</li>
+            <li><strong>ABDC（下死点後）</strong>：ピストンが下死点を通過した後の角度</li>
+        </ul>
+
+        <h3>計算式と使用例</h3>
+        <p>このツールでは、カム作用角をクランク角度で入力し、中心角を基準に開閉時期を求めます。</p>
+        <div class="formula">
+            IN開き始め（BTDC）＝ IN作用角 ÷ 2 − IN中心角<br>
+            IN閉じ終わり（ABDC）＝ IN中心角 ＋ IN作用角 ÷ 2 − 180°<br>
+            EX開き始め（BBDC）＝ EX中心角 ＋ EX作用角 ÷ 2 − 180°<br>
+            EX閉じ終わり（ATDC）＝ EX作用角 ÷ 2 − EX中心角<br>
+            オーバーラップ角 ＝ IN開き始め（符号付き）＋ EX閉じ終わり（符号付き）
+        </div>
+        <p>例えばIN作用角288°・中心角105°、EX作用角288°・中心角109°の場合、IOは上死点前39°、ICは下死点後69°、EOは下死点前73°、ECは上死点後35°となり、オーバーラップ角は74°です。</p>
+        <p class="note">※計算結果は入力した作用角・中心角に基づく理論値です。実際のバルブ開閉時期は測定リフト量やカム仕様などの条件によって異なるため、整備・調整時は実測値とメーカー指定値を確認してください。</p>
+    </section>
 </div>
 
   <!-- フッターエリア -->

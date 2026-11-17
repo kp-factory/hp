@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>有効圧縮比（動的圧縮比）計算シミュレーター</title>
+    <title>有効圧縮比・動的圧縮比（DCR）計算シミュレーター｜吸気バルブ閉時期・SCR逆算｜KP-ファクトリー</title>
+    <meta name="description" content="エンジンの有効圧縮比（動的圧縮比・DCR）を無料計算。幾何学的圧縮比（SCR）、吸気バルブ閉時期（ABDC）、ストローク、コンロッド長から算出し、目標DCRに必要なSCRの逆算にも対応。トヨタ4K・5K・4A-Gの入力サンプル付き。">
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -325,6 +326,16 @@
             font-weight: bold;
         }
 
+
+        /* SEO解説エリア */
+        .seo-guide { margin-top: 18px; }
+        .seo-guide h2 { font-size: 18px; color: #ffaa00; border-bottom: 1px solid #333; padding-bottom: 5px; margin: 18px 0 10px; }
+        .seo-guide h2:first-child { margin-top: 0; }
+        .seo-guide p, .seo-guide li { font-size: 14px; line-height: 1.8; font-weight: normal; color: #e0e0e0; }
+        .seo-guide ul { padding-left: 1.5em; }
+        .seo-guide strong { color: #fff; }
+        .seo-guide .formula { padding: 10px; background: #1c1c1c; border-left: 3px solid #ffaa00; overflow-wrap: anywhere; font-size: 14px; line-height: 1.8; }
+
         /* --- フッターエリア (共通) --- */
         .footer-container {
             width: 100%;
@@ -457,6 +468,33 @@
         <div class="section-title">計算結果</div>
         <div id="result-text">計算ボタンを押してください。</div>
     </div>
+
+    <!-- 計算ツールの説明・SEO向け解説 -->
+    <section class="card seo-guide" aria-label="有効圧縮比計算の解説">
+        <h2>有効圧縮比（動的圧縮比）計算シミュレーターとは？</h2>
+        <p>カムシャフトの<strong>吸気バルブ閉時期（ABDC）</strong>、エンジンの<strong>幾何学的圧縮比（SCR）</strong>、ストローク長、コンロッド長から、<strong>有効圧縮比（DCR）</strong>を計算する無料ツールです。目標とするDCRから必要なSCRを逆算することもできます。</p>
+
+        <h2>幾何学的圧縮比（SCR）と有効圧縮比（DCR）の違い</h2>
+        <p><strong>SCR</strong>は、ピストンが下死点から上死点まで移動する全行程をもとにした圧縮比です。一方、<strong>DCR</strong>は吸気バルブが閉じた後のピストン移動量（有効ストローク）をもとに算出する圧縮比です。一般に吸気バルブの閉時期が遅くなるほど、有効ストロークは短くなります。</p>
+
+        <h2>計算方法・使い方</h2>
+        <ul>
+            <li><strong>有効圧縮比（DCR）を計算：</strong>SCR、吸気バルブ閉時期（ABDC）、ストローク長、コンロッド中心間長を入力します。</li>
+            <li><strong>必要な幾何学的圧縮比（SCR）を逆算：</strong>目標DCRと同じエンジン寸法・吸気バルブ閉時期を入力します。</li>
+            <li><strong>仕様サンプル：</strong>トヨタ4K・5K・4A-Gなどのサンプル値を読み込んで、数値を変更しながら比較できます。サンプル値は実車の仕様確認に代わるものではありません。</li>
+        </ul>
+
+        <h2>吸気バルブ閉時期（ABDC）とは？</h2>
+        <p><strong>ABDC（After Bottom Dead Center）</strong>は「下死点後」を意味します。このツールには、吸気バルブが<strong>完全に閉じる角度（0mmリフト基準）</strong>を入力してください。カムカタログに記載された一定リフト時の測定値とは基準が異なる場合があります。</p>
+
+        <h2>計算式について</h2>
+        <p>クランク半径を r＝ストローク長÷2、コンロッド長を L、吸気バルブ閉時期を θ とすると、下死点からのピストン上昇量 h を連桿機構の幾何から求めます。</p>
+        <div class="formula">h ＝ (r ＋ L) − {r × cosθ ＋ √(L² − r² × sin²θ)}<br>有効ストローク ＝ ストローク長 − h<br>DCR ＝ 1 ＋ (SCR − 1) × (有効ストローク ÷ ストローク長)<br>SCR ＝ 1 ＋ (DCR − 1) ÷ (有効ストローク ÷ ストローク長)</div>
+        <p>例えば、SCRが11.0で吸気バルブ閉時期がABDC 65°の場合、ストローク長とコンロッド長を含めて有効ストロークを計算し、DCRを求めます。実際の値は上の計算画面で確認できます。</p>
+
+        <h2>使用上の注意</h2>
+        <p>このツールのDCRは<strong>バルブ閉時期とピストン位置に基づく幾何学的な計算値</strong>です。実際の筒内圧力、圧縮圧力、ノッキング限界、燃料の必要オクタン価を直接示すものではありません。吸気の慣性、過給、バルブリフトの測定基準、燃焼室形状などは計算に含まれません。エンジンの仕様決定には実測値や専門的な検証を併用してください。</p>
+    </section>
 </div>
 
   <!-- フッターエリア -->

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>エンジン圧縮比・各部寸法計算シミュレーター</title>
+    <title>エンジン圧縮比・各部寸法計算シミュレーター | KP-ファクトリー</title>
+    <meta name="description" content="エンジンの幾何学的圧縮比を無料計算。シリンダボア、ストローク、燃焼室容積、ガスケット厚、ピストントップ容積から計算し、目標圧縮比から各部寸法を逆算できます。">
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -352,6 +353,15 @@
             color: #ffffff;
             text-decoration: underline;
         }
+
+        /* SEO・使い方説明（計算機能とは独立） */
+        .seo-guide { margin-top: 28px; text-align: left; }
+        .seo-guide h2 { font-size: 19px; color: #ffaa00; margin: 6px 0 14px; }
+        .seo-guide h3 { font-size: 16px; color: #ffaa00; margin: 22px 0 8px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .seo-guide p, .seo-guide li { color: #dddddd; font-size: 14px; font-weight: normal; line-height: 1.85; }
+        .seo-guide ul { padding-left: 1.4em; }
+        .seo-guide .formula { background: #080808; border-left: 3px solid #ffaa00; padding: 10px; color: #fff; font-size: 14px; font-weight: normal; overflow-wrap: anywhere; }
+        @media screen and (max-width: 480px) { .seo-guide { margin-top: 22px; } .seo-guide h2 { font-size: 17px; } .seo-guide p, .seo-guide li { font-size: 14px; } }
     </style>
 </head>
 <body>
@@ -482,6 +492,38 @@
         <div class="section-title">計算結果</div>
         <div id="result-text">計算ボタンを押してください。</div>
     </div>
+
+    <!-- 計算画面下の説明コンテンツ：検索エンジンにも読み取れる静的HTML -->
+    <section class="card seo-guide" aria-labelledby="seo-guide-title">
+        <h2 id="seo-guide-title">エンジン圧縮比・各部寸法計算シミュレーターとは？</h2>
+        <p>シリンダボア、ストローク、燃焼室容積、ヘッドガスケットの寸法、ピストントップ形状、デッキクリアランスから、エンジンの幾何学的圧縮比（静的圧縮比）を計算する無料ツールです。目標圧縮比から、必要なシリンダボア・ストローク・ヘッド燃焼室容積・ガスケット厚・ピストントップ容積を逆算することもできます。</p>
+
+        <h3>圧縮比（幾何学的圧縮比）とは？</h3>
+        <p>ピストンが下死点にあるときのシリンダ内全容積を、上死点にあるときの燃焼室容積で割った値です。圧縮比はエンジンの燃焼特性を検討するための基本的な指標ですが、実際の筒内圧力やノッキングの発生は、カムタイミング、燃料、点火時期、温度などにも左右されます。</p>
+        <div class="formula">圧縮比 ＝（1気筒排気量 V1 ＋ 上死点燃焼室容積 V2）÷ V2</div>
+
+        <h3>計算に使用する寸法・容積</h3>
+        <ul>
+            <li><strong>シリンダボア（mm）</strong>：シリンダ内径。ストロークと組み合わせて1気筒排気量を求めます。</li>
+            <li><strong>ストローク（mm）</strong>：ピストンが上死点から下死点まで移動する距離です。</li>
+            <li><strong>ヘッド燃焼室容積（cc）</strong>：シリンダヘッド側の燃焼室容積です。</li>
+            <li><strong>ガスケットボア・ガスケット厚（mm）</strong>：ヘッドガスケット部分の容積を計算します。厚さは組付け時の実効値を使用してください。</li>
+            <li><strong>ピストントップ容積（cc）</strong>：凹みはプラス、ドーム状の盛り上がりはマイナスで入力します。</li>
+            <li><strong>デッキクリアランス（mm）</strong>：上死点でのピストンとシリンダブロック上面との距離。ピストンが飛び出す場合はマイナスです。</li>
+        </ul>
+
+        <h3>計算式と計算方法</h3>
+        <div class="formula">V1（cc）＝ π ×（シリンダボア ÷ 2）² × ストローク ÷ 1000</div>
+        <div class="formula">V2（cc）＝ ヘッド燃焼室容積 ＋ ガスケット容積 ＋ ピストントップ容積 ＋ デッキ容積</div>
+        <p>ガスケット容積はガスケットボアと厚さから、デッキ容積はシリンダボアとデッキクリアランスから算出します。寸法をmmで入力するため、体積をccへ換算する際に1000で割ります。</p>
+
+        <h3>使い方・逆算できる項目</h3>
+        <p>「求めたい項目を選択」で圧縮比、シリンダボア、ストローク、ヘッド燃焼室容積、ガスケット厚、ピストントップ容積のいずれかを選び、必要な数値を入力してください。圧縮比以外を選んだ場合は「目標圧縮比」を指定して必要な寸法や容積を逆算します。「仕様サンプル読込」ではトヨタ4K型・3K型の入力例を呼び出せます。</p>
+
+        <h3>計算例と使用上の注意</h3>
+        <p>例えばシリンダボア75.0mm、ストローク73.0mmの場合、1気筒排気量は約322.5ccです。ここに実測したヘッド燃焼室容積やガスケット厚などを入力することで、組み合わせに応じた圧縮比を比較できます。</p>
+        <p>本ツールの計算結果は入力した寸法を基にした理論値です。サンプル値は計算操作の例であり、実車の仕様を保証するものではありません。エンジン組付け時は燃焼室容積、ガスケットの圧縮後厚さ、ピストン突出量、バルブ・ピストンクリアランスなどを実測し、安全性を確認してください。また、本ツールの圧縮比は吸気バルブ閉時期を考慮する動的圧縮比とは異なります。</p>
+    </section>
 </div>
 
   <!-- フッターエリア -->

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>エンジン総排気量 計算シミュレーター</title>
+    <title>エンジン排気量計算・ボア・ストローク逆算 | KP-ファクトリー</title>
+    <meta name="description" content="エンジンの総排気量（cc）をボア・ストローク・気筒数から計算。目標排気量からシリンダボア、ストローク、気筒数の逆算もできる無料シミュレーター。トヨタ4K・3K・4A-Gのサンプル付き。">
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -345,6 +346,17 @@
             color: #ffffff;
             text-decoration: underline;
         }
+
+        /* --- SEO・使い方説明エリア --- */
+        .seo-guide { margin-top: 28px; font-weight: normal; line-height: 1.8; }
+        .seo-guide h2 { color: #ffaa00; font-size: 19px; margin: 0 0 12px; border-bottom: 1px solid #444; padding-bottom: 8px; }
+        .seo-guide h3 { color: #ffaa00; font-size: 16px; margin: 22px 0 8px; }
+        .seo-guide p { margin: 8px 0 12px; }
+        .seo-guide ul { padding-left: 1.5em; margin: 8px 0 14px; }
+        .seo-guide li { margin-bottom: 6px; }
+        .seo-guide .formula { background: #080808; border-left: 3px solid #ffaa00; padding: 12px; margin: 12px 0; overflow-wrap: anywhere; }
+        .seo-guide .guide-note { color: #bbb; font-size: 13px; }
+        @media (max-width: 480px) { .seo-guide { line-height: 1.75; } .seo-guide h2 { font-size: 17px; } .seo-guide h3 { font-size: 15px; } }
     </style>
 </head>
 <body>
@@ -434,6 +446,32 @@
         <div class="section-title">計算結果</div>
         <div id="result-text">計算ボタンを押してください。</div>
     </div>
+
+    <!-- 検索エンジン向け解説・使い方（計算結果の下） -->
+    <section class="card seo-guide" aria-labelledby="displacement-guide-title">
+        <h2 id="displacement-guide-title">エンジン総排気量 計算シミュレーターとは？</h2>
+        <p>シリンダボア（内径）、ピストンストローク、気筒数を入力して、エンジンの<strong>総排気量（cc）</strong>を計算する無料ツールです。目標排気量から必要なボアやストロークを逆算でき、エンジンのボアアップ・ストローク変更を検討する際にも利用できます。</p>
+
+        <h3>総排気量の計算方法</h3>
+        <p>排気量は、ピストンが下死点から上死点まで動く間に掃く容積（行程容積）の合計です。ボア・ストロークをmmで入力する場合、次の式で求めます。</p>
+        <div class="formula">1気筒の排気量（cc）＝ π × (ボア ÷ 2)² × ストローク ÷ 1000<br>総排気量（cc）＝ 1気筒の排気量 × 気筒数</div>
+        <p>例えば、ボア75.0mm・ストローク73.0mm・4気筒では、総排気量は約<strong>1,290cc</strong>となります。</p>
+
+        <h3>シミュレーターの使い方</h3>
+        <ul>
+            <li><strong>総排気量：</strong>ボア・ストローク・気筒数から排気量を算出します。</li>
+            <li><strong>シリンダボア：</strong>目標排気量・ストローク・気筒数から必要なボアを逆算します。</li>
+            <li><strong>ストローク：</strong>目標排気量・ボア・気筒数から必要なストロークを逆算します。</li>
+            <li><strong>気筒数：</strong>排気量・ボア・ストロークから計算上の気筒数を求めます。</li>
+        </ul>
+        <p>「求めたい項目」を選び、表示された入力欄に数値を設定してください。トヨタ4K・3K・4A-G型の仕様サンプルも選択できます。</p>
+
+        <h3>ボアとストロークの違い</h3>
+        <p><strong>ボア</strong>はシリンダ内径、<strong>ストローク</strong>はピストンが上死点から下死点まで移動する距離です。ボアを拡大する「ボアアップ」やストロークを変更すると、排気量も変わります。</p>
+
+        <h3>計算結果を利用する際の注意点</h3>
+        <p class="guide-note">本ツールは幾何学的な行程容積を計算します。燃焼室容積や圧縮比は含みません。逆算した気筒数は小数になる場合がありますが、実際のエンジンの気筒数は整数です。また、加工の可否・強度・ピストンやクランクの干渉などは別途確認してください。仕様サンプルは入力例として利用し、実車の寸法は整備資料や実測値で確認してください。</p>
+    </section>
 </div>
 
   <!-- フッターエリア -->
