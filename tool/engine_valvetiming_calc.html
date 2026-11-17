@@ -337,6 +337,12 @@
         .result-angle-line { white-space: nowrap; font-size: clamp(13px, 3.8vw, 1.15rem); }
         .crank-angle { font-size: 0.72em; color: #dddddd; white-space: nowrap; }
 
+        /* スマホ表示：計算結果の角度表記を一段階大きくする */
+        @media screen and (max-width: 480px) {
+            .result-angle-line { font-size: clamp(14px, 4.1vw, 19px); }
+            .crank-angle { font-size: 0.68em; }
+        }
+
         .chart-box {
             background: #111111;
             border: 1px solid #333333;
