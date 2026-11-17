@@ -333,6 +333,10 @@
             margin-top: 2px;
         }
 
+        /* 計算結果：角度とクランク角度をスマホでも1行に収める */
+        .result-angle-line { white-space: nowrap; font-size: clamp(13px, 3.8vw, 1.15rem); }
+        .crank-angle { font-size: 0.72em; color: #dddddd; white-space: nowrap; }
+
         .chart-box {
             background: #111111;
             border: 1px solid #333333;
@@ -675,12 +679,16 @@ function loadSample() {
     calculate();
 }
 
+function angleName(prefix) {
+    return {BTDC:'上死点前', ABDC:'下死点後', BBDC:'下死点前', ATDC:'上死点後'}[prefix] || prefix;
+}
+
 // 角度表記フォーマット（マイナス値＝反対側基準にも対応）
 function formatAngleLabel(deg, posPrefix, negPrefix) {
     if (deg >= 0) {
-        return `${posPrefix} ${deg.toFixed(1)}°`;
+        return `${angleName(posPrefix)}(${posPrefix}) ${deg.toFixed(1)}°`;
     } else {
-        return `${negPrefix} ${Math.abs(deg).toFixed(1)}°`;
+        return `${angleName(negPrefix)}(${negPrefix}) ${Math.abs(deg).toFixed(1)}°`;
     }
 }
 
@@ -712,10 +720,24 @@ function calculate() {
         document.getElementById('res-title-3').innerText = 'EO (EX開き始め)';
         document.getElementById('res-title-4').innerText = 'EC (EX閉じ終わり)';
 
-        document.getElementById('res-val-1').innerText = formatAngleLabel(ioBTDC, 'BTDC', 'ATDC');
-        document.getElementById('res-val-2').innerText = `${formatAngleLabel(icABDC, 'ABDC', 'BBDC')} (クランク ${inCloseCrank.toFixed(1)}°)`;
-        document.getElementById('res-val-3').innerText = `${formatAngleLabel(eoBBDC, 'BBDC', 'ABDC')} (クランク ${exOpenCrank.toFixed(1)}°)`;
-        document.getElementById('res-val-4').innerText = `${formatAngleLabel(ecATDC, 'ATDC', 'BTDC')} (クランク ${exCloseCrank.toFixed(1)}°)`;
+        const resultAngles = [
+            [formatAngleLabel(ioBTDC, 'BTDC', 'ATDC'), null],
+            [formatAngleLabel(icABDC, 'ABDC', 'BBDC'), inCloseCrank],
+            [formatAngleLabel(eoBBDC, 'BBDC', 'ABDC'), exOpenCrank],
+            [formatAngleLabel(ecATDC, 'ATDC', 'BTDC'), exCloseCrank]
+        ];
+        resultAngles.forEach(([label, crank], index) => {
+            const el = document.getElementById(`res-val-${index + 1}`);
+            el.classList.add('result-angle-line');
+            el.textContent = '';
+            el.append(document.createTextNode(label));
+            if (crank !== null) {
+                const small = document.createElement('span');
+                small.className = 'crank-angle';
+                small.textContent = ` (クランク ${crank.toFixed(1)}°)`;
+                el.appendChild(small);
+            }
+        });
 
     } else {
         ioBTDC = parseFloat(document.getElementById('val-io').value);
@@ -730,6 +752,7 @@ function calculate() {
         exDur = eoBBDC + 180 + ecATDC;
         exCenter = (exDur / 2) - ecATDC;
 
+        for (let i = 1; i <= 4; i++) document.getElementById(`res-val-${i}`).classList.remove('result-angle-line');
         document.getElementById('res-title-1').innerText = 'IN カム作用角';
         document.getElementById('res-title-2').innerText = 'IN 中心角 (TDC基準)';
         document.getElementById('res-title-3').innerText = 'EX カム作用角';
